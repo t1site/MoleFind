@@ -2,7 +2,9 @@
     {
         "name": "Water",
         "formula": "H2O",
-        "smiles": "O",
+        "smiles": [
+            "O"
+        ],
         "cas": "7732-18-5",
         "molar_mass": 18.015,
         "description": "A chemical compound composed of hydrogen and oxygen."
@@ -10,7 +12,10 @@
     {
         "name": "Ethanol",
         "formula": "C2H6O",
-        "smiles": "CCO",
+        "smiles": [
+            "CCO",
+            "OCC"
+        ],
         "cas": "64-17-5",
         "molar_mass": 46.069,
         "description": "An alcohol with the molecular formula C2H6O."
@@ -18,7 +23,9 @@
     {
         "name": "Dimethyl ether",
         "formula": "C2H6O",
-        "smiles": "COC",
+        "smiles": [
+            "COC"
+        ],
         "cas": "115-10-6",
         "molar_mass": 46.069,
         "description": "An ether with the molecular formula C2H6O."
@@ -26,7 +33,10 @@
     {
         "name": "Methanol",
         "formula": "CH4O",
-        "smiles": "CO",
+        "smiles": [
+            "CO",
+            "OC"
+        ],
         "cas": "67-56-1",
         "molar_mass": 32.042,
         "description": "The simplest alcohol."
@@ -34,7 +44,10 @@
     {
         "name": "Acetic acid",
         "formula": "C2H4O2",
-        "smiles": "CC(=O)O",
+        "smiles": [
+            "CC(=O)O",
+            "OC(=O)C"
+        ],
         "cas": "64-19-7",
         "molar_mass": 60.052,
         "description": "A carboxylic acid commonly found in vinegar."
@@ -42,7 +55,9 @@
     {
         "name": "Glucose",
         "formula": "C6H12O6",
-        "smiles": "C(C1C(C(C(C(O1)O)O)O)O)O",
+        "smiles": [
+            "C(C1C(C(C(C(O1)O)O)O)O)O"
+        ],
         "cas": "50-99-7",
         "molar_mass": 180.156,
         "description": "A monosaccharide with the molecular formula C6H12O6."
@@ -50,7 +65,9 @@
     {
         "name": "Caffeine",
         "formula": "C8H10N4O2",
-        "smiles": "Cn1c(=O)c2c(ncn2C)n(C)c1=O",
+        "smiles": [
+            "Cn1c(=O)c2c(ncn2C)n(C)c1=O"
+        ],
         "cas": "58-08-2",
         "molar_mass": 194.190,
         "description": "A naturally occurring methylxanthine alkaloid."
@@ -58,7 +75,9 @@
     {
         "name": "Benzene",
         "formula": "C6H6",
-        "smiles": "c1ccccc1",
+        "smiles": [
+            "c1ccccc1"
+        ],
         "cas": "71-43-2",
         "molar_mass": 78.114,
         "description": "An aromatic hydrocarbon with a six-membered ring."
@@ -66,7 +85,9 @@
     {
         "name": "Pyridine",
         "formula": "C5H5N",
-        "smiles": "c1ccncc1",
+        "smiles": [
+            "c1ccncc1"
+        ],
         "cas": "110-86-1",
         "molar_mass": 79.102,
         "description": "An aromatic heterocyclic compound containing one nitrogen atom."
@@ -74,7 +95,9 @@
     {
         "name": "Pyrrole",
         "formula": "C4H5N",
-        "smiles": "c1cc[nH]c1",
+        "smiles": [
+            "c1cc[nH]c1"
+        ],
         "cas": "109-97-7",
         "molar_mass": 67.091,
         "description": "An aromatic five-membered nitrogen-containing heterocycle."
