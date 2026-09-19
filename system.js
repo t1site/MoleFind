@@ -3,7 +3,8 @@
 
 const SEARCH_MODES = {
     SMILES: 0,
-    FORMULA: 1
+    FORMULA: 1,
+    INCHIKEY: 2
 };
 
 
@@ -32,23 +33,30 @@ document.addEventListener(
         modeName =
             document.getElementById("modeName");
 
+
         inputLabel =
             document.getElementById("inputLabel");
+
 
         searchInput =
             document.getElementById("searchInput");
 
+
         searchButton =
             document.getElementById("searchButton");
+
 
         previousModeButton =
             document.getElementById("previousMode");
 
+
         nextModeButton =
             document.getElementById("nextMode");
 
+
         modeWrapper =
             document.getElementById("modeWrapper");
+
 
         results =
             document.getElementById("results");
@@ -79,7 +87,9 @@ document.addEventListener(
             "keydown",
             (event) => {
 
-                if (event.key === "Enter") {
+                if (
+                    event.key === "Enter"
+                ) {
 
                     event.preventDefault();
 
@@ -102,6 +112,7 @@ document.addEventListener(
          * データベースの読み込みが完了してから
          * URLの ?q= を処理する。
          */
+
         const loaded =
             await loadCompounds();
 
@@ -206,6 +217,7 @@ function runURLQuery() {
 
 
     if (!params.has("q")) {
+
         return;
     }
 
@@ -218,6 +230,7 @@ function runURLQuery() {
         query === null ||
         query.trim() === ""
     ) {
+
         return;
     }
 
@@ -225,6 +238,7 @@ function runURLQuery() {
     /*
      * ?q= は常にSMILES検索。
      */
+
     currentMode =
         SEARCH_MODES.SMILES;
 
@@ -246,9 +260,12 @@ function runURLQuery() {
 
 function setMode(mode) {
 
-    currentMode = mode;
+    currentMode =
+        mode;
+
 
     updateModeUI();
+
 
     searchInput.focus();
 }
@@ -257,11 +274,21 @@ function setMode(mode) {
 function nextMode() {
 
     if (
-        currentMode === SEARCH_MODES.SMILES
+        currentMode ===
+        SEARCH_MODES.SMILES
     ) {
 
         setMode(
             SEARCH_MODES.FORMULA
+        );
+
+    } else if (
+        currentMode ===
+        SEARCH_MODES.FORMULA
+    ) {
+
+        setMode(
+            SEARCH_MODES.INCHIKEY
         );
 
     } else {
@@ -276,17 +303,27 @@ function nextMode() {
 function previousMode() {
 
     if (
-        currentMode === SEARCH_MODES.SMILES
+        currentMode ===
+        SEARCH_MODES.SMILES
     ) {
 
         setMode(
-            SEARCH_MODES.FORMULA
+            SEARCH_MODES.INCHIKEY
+        );
+
+    } else if (
+        currentMode ===
+        SEARCH_MODES.FORMULA
+    ) {
+
+        setMode(
+            SEARCH_MODES.SMILES
         );
 
     } else {
 
         setMode(
-            SEARCH_MODES.SMILES
+            SEARCH_MODES.FORMULA
         );
     }
 }
@@ -295,28 +332,69 @@ function previousMode() {
 function updateModeUI() {
 
     if (
-        currentMode === SEARCH_MODES.SMILES
+        currentMode ===
+        SEARCH_MODES.SMILES
     ) {
 
         modeName.textContent =
             "SMILES";
 
+
         inputLabel.textContent =
             "SMILES";
+
 
         searchInput.placeholder =
             "e.g. CCO";
 
-    } else {
+
+        searchInput.setAttribute(
+            "aria-label",
+            "SMILES search input"
+        );
+
+
+    } else if (
+        currentMode ===
+        SEARCH_MODES.FORMULA
+    ) {
 
         modeName.textContent =
             "Molecular Formula";
 
+
         inputLabel.textContent =
             "Molecular Formula";
 
+
         searchInput.placeholder =
             "e.g. C2H6O";
+
+
+        searchInput.setAttribute(
+            "aria-label",
+            "Molecular formula search input"
+        );
+
+
+    } else {
+
+        modeName.textContent =
+            "InChIKey";
+
+
+        inputLabel.textContent =
+            "InChIKey";
+
+
+        searchInput.placeholder =
+            "e.g. LFQSCWFLJHTTHZ-UHFFFAOYSA-N";
+
+
+        searchInput.setAttribute(
+            "aria-label",
+            "InChIKey search input"
+        );
     }
 }
 
@@ -328,8 +406,10 @@ function updateModeUI() {
 function handleKeyboard(event) {
 
     if (
-        document.activeElement === searchInput
+        document.activeElement ===
+        searchInput
     ) {
+
         return;
     }
 
@@ -372,12 +452,14 @@ function setupSwipe() {
             if (
                 event.touches.length !== 1
             ) {
+
                 return;
             }
 
 
             touchStartX =
                 event.touches[0].clientX;
+
 
             touchStartY =
                 event.touches[0].clientY;
@@ -395,6 +477,7 @@ function setupSwipe() {
             if (
                 event.changedTouches.length !== 1
             ) {
+
                 return;
             }
 
@@ -420,6 +503,7 @@ function setupSwipe() {
                 Math.abs(deltaX) <
                 minimumDistance
             ) {
+
                 return;
             }
 
@@ -428,11 +512,14 @@ function setupSwipe() {
                 Math.abs(deltaX) <=
                 Math.abs(deltaY)
             ) {
+
                 return;
             }
 
 
-            if (deltaX < 0) {
+            if (
+                deltaX < 0
+            ) {
 
                 nextMode();
 
@@ -471,16 +558,27 @@ function search() {
 
 
     if (
-        currentMode === SEARCH_MODES.SMILES
+        currentMode ===
+        SEARCH_MODES.SMILES
     ) {
 
         matches =
             searchBySMILES(query);
 
-    } else {
+
+    } else if (
+        currentMode ===
+        SEARCH_MODES.FORMULA
+    ) {
 
         matches =
             searchByFormula(query);
+
+
+    } else {
+
+        matches =
+            searchByInChIKey(query);
     }
 
 
@@ -505,12 +603,15 @@ function searchBySMILES(query) {
         (compound) => {
 
             if (!compound.smiles) {
+
                 return false;
             }
 
 
             const smilesList =
-                Array.isArray(compound.smiles)
+                Array.isArray(
+                    compound.smiles
+                )
                     ? compound.smiles
                     : [compound.smiles];
 
@@ -519,7 +620,9 @@ function searchBySMILES(query) {
                 (smiles) => {
 
                     return (
-                        normalizeSMILES(smiles) ===
+                        normalizeSMILES(
+                            smiles
+                        ) ===
                         normalizedQuery
                     );
                 }
@@ -533,7 +636,10 @@ function normalizeSMILES(smiles) {
 
     return String(smiles)
         .trim()
-        .replace(/\s+/g, "");
+        .replace(
+            /\s+/g,
+            ""
+        );
 }
 
 
@@ -551,6 +657,7 @@ function searchByFormula(query) {
         (compound) => {
 
             if (!compound.formula) {
+
                 return false;
             }
 
@@ -558,7 +665,8 @@ function searchByFormula(query) {
             return (
                 normalizeFormula(
                     compound.formula
-                ) === normalizedQuery
+                ) ===
+                normalizedQuery
             );
         }
     );
@@ -570,10 +678,14 @@ function normalizeFormula(formula) {
     let value =
         String(formula)
             .trim()
-            .replace(/\s+/g, "");
+            .replace(
+                /\s+/g,
+                ""
+            );
 
 
     const subscriptMap = {
+
         "₀": "0",
         "₁": "1",
         "₂": "2",
@@ -584,14 +696,16 @@ function normalizeFormula(formula) {
         "₇": "7",
         "₈": "8",
         "₉": "9"
+
     };
 
 
-    value = value.replace(
-        /[₀₁₂₃₄₅₆₇₈₉]/g,
-        (character) =>
-            subscriptMap[character]
-    );
+    value =
+        value.replace(
+            /[₀₁₂₃₄₅₆₇₈₉]/g,
+            (character) =>
+                subscriptMap[character]
+        );
 
 
     const matches =
@@ -609,7 +723,9 @@ function normalizeFormula(formula) {
     const elements = {};
 
 
-    for (const token of matches) {
+    for (
+        const token of matches
+    ) {
 
         const match =
             token.match(
@@ -618,6 +734,7 @@ function normalizeFormula(formula) {
 
 
         if (!match) {
+
             continue;
         }
 
@@ -636,7 +753,10 @@ function normalizeFormula(formula) {
 
 
         elements[symbol] =
-            (elements[symbol] || 0) +
+            (
+                elements[symbol] ||
+                0
+            ) +
             count;
     }
 
@@ -649,12 +769,57 @@ function normalizeFormula(formula) {
                 const count =
                     elements[element];
 
+
                 return count === 1
                     ? element
                     : `${element}${count}`;
             }
         )
         .join("");
+}
+
+
+/* =========================================================
+   InChIKey search
+   ========================================================= */
+
+function searchByInChIKey(query) {
+
+    const normalizedQuery =
+        normalizeInChIKey(query);
+
+
+    return compounds.filter(
+        (compound) => {
+
+            if (
+                !compound.inchi_key
+            ) {
+
+                return false;
+            }
+
+
+            return (
+                normalizeInChIKey(
+                    compound.inchi_key
+                ) ===
+                normalizedQuery
+            );
+        }
+    );
+}
+
+
+function normalizeInChIKey(inchiKey) {
+
+    return String(inchiKey)
+        .trim()
+        .replace(
+            /\s+/g,
+            ""
+        )
+        .toUpperCase();
 }
 
 
@@ -667,7 +832,9 @@ function renderResults(
     matches
 ) {
 
-    if (matches.length === 0) {
+    if (
+        matches.length === 0
+    ) {
 
         results.innerHTML =
             '<div class="empty">No matching compounds found.</div>';
@@ -687,8 +854,14 @@ function renderResults(
     results.innerHTML = `
         <p class="result-summary">` +
         `${matches.length} ` +
-        `${matches.length === 1 ? "compound" : "compounds"} ` +
-        `found for <strong>${escapeHTML(query)}</strong>.</p>` +
+        `${
+            matches.length === 1
+                ? "compound"
+                : "compounds"
+        } ` +
+        `found for <strong>${
+            escapeHTML(query)
+        }</strong>.</p>` +
         cards;
 }
 
@@ -697,10 +870,14 @@ function renderResults(
    Compound card
    ========================================================= */
 
-function renderCompoundCard(compound) {
+function renderCompoundCard(
+    compound
+) {
 
     const smilesList =
-        Array.isArray(compound.smiles)
+        Array.isArray(
+            compound.smiles
+        )
             ? compound.smiles
             : compound.smiles
                 ? [compound.smiles]
@@ -718,25 +895,31 @@ function renderCompoundCard(compound) {
     return `
         <article class="result-card">
 
-            <h2 class="result-name">${escapeHTML(
-                compound.name ||
-                "Unnamed compound"
-            )}</h2>
+            <h2 class="result-name">${
+                escapeHTML(
+                    compound.name ||
+                    "Unnamed compound"
+                )
+            }</h2>
+
 
             ${renderProperty(
                 "Formula",
                 compound.formula
             )}
 
+
             ${renderProperty(
                 "SMILES",
                 smilesList.join("\n")
             )}
 
+
             ${renderProperty(
                 "CAS RN",
                 compound.cas
             )}
+
 
             ${renderProperty(
                 "Molar mass",
@@ -745,20 +928,24 @@ function renderCompoundCard(compound) {
                 )
             )}
 
+
             ${renderProperty(
                 "Boiling point",
                 compound.boiling_point
             )}
+
 
             ${renderProperty(
                 "Density",
                 compound.density
             )}
 
+
             ${renderProperty(
                 "LogP",
                 compound.logp
             )}
+
 
             ${renderProperty(
                 "Functional group",
@@ -767,26 +954,34 @@ function renderCompoundCard(compound) {
                 )
             )}
 
+
             ${renderProperty(
                 "Acid / base",
                 compound.acid_base
             )}
+
 
             ${renderProperty(
                 "IUPAC name",
                 compound.iupac_name
             )}
 
+
             ${renderProperty(
                 "InChIKey",
                 compound.inchi_key
             )}
 
+
             ${renderPropertyLink(
                 "Google Scholar",
                 scholarURL,
-                `Search ${compound.name || "this compound"}`
+                `Search ${
+                    compound.name ||
+                    "this compound"
+                }`
             )}
+
 
             ${renderProperty(
                 "Description",
@@ -802,13 +997,17 @@ function renderCompoundCard(compound) {
    Properties
    ========================================================= */
 
-function renderProperty(name, value) {
+function renderProperty(
+    name,
+    value
+) {
 
     if (
         value === undefined ||
         value === null ||
         value === ""
     ) {
+
         return "";
     }
 
@@ -817,15 +1016,25 @@ function renderProperty(name, value) {
         String(value).trim();
 
 
-    if (cleanValue === "") {
+    if (
+        cleanValue === ""
+    ) {
+
         return "";
     }
 
 
     return `
         <div class="property">
-            <span class="property-name">${escapeHTML(name)}</span>
-            <span class="property-value">${escapeHTML(cleanValue)}</span>
+
+            <span class="property-name">
+                ${escapeHTML(name)}
+            </span>
+
+            <span class="property-value">
+                ${escapeHTML(cleanValue)}
+            </span>
+
         </div>
     `;
 }
@@ -838,14 +1047,28 @@ function renderPropertyLink(
 ) {
 
     if (!url) {
+
         return "";
     }
 
 
     return `
         <div class="property">
-            <span class="property-name">${escapeHTML(name)}</span>
-            <span class="property-value"><a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(text)}</a></span>
+
+            <span class="property-name">
+                ${escapeHTML(name)}
+            </span>
+
+            <span class="property-value">
+                <a
+                    href="${escapeHTML(url)}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    ${escapeHTML(text)}
+                </a>
+            </span>
+
         </div>
     `;
 }
@@ -853,9 +1076,14 @@ function renderPropertyLink(
 
 function formatList(value) {
 
-    if (Array.isArray(value)) {
+    if (
+        Array.isArray(value)
+    ) {
 
-        if (value.length === 0) {
+        if (
+            value.length === 0
+        ) {
+
             return "";
         }
 
@@ -875,6 +1103,7 @@ function formatMolarMass(value) {
         value === null ||
         value === ""
     ) {
+
         return "";
     }
 
@@ -883,7 +1112,9 @@ function formatMolarMass(value) {
         Number(value);
 
 
-    if (!Number.isFinite(number)) {
+    if (
+        !Number.isFinite(number)
+    ) {
 
         return String(value);
     }
