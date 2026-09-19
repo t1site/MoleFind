@@ -1,12 +1,15 @@
 "use strict";
 
+
 const SEARCH_MODES = {
     SMILES: 0,
     FORMULA: 1
 };
 
+
 let currentMode = SEARCH_MODES.SMILES;
 let compounds = [];
+
 
 let modeName;
 let inputLabel;
@@ -22,78 +25,82 @@ let results;
    Initialisation
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    modeName = document.getElementById("modeName");
-    inputLabel = document.getElementById("inputLabel");
-    searchInput = document.getElementById("searchInput");
-    searchButton = document.getElementById("searchButton");
-    previousModeButton = document.getElementById("previousMode");
-    nextModeButton = document.getElementById("nextMode");
-    modeWrapper = document.getElementById("modeWrapper");
-    results = document.getElementById("results");
+        modeName =
+            document.getElementById("modeName");
 
-    updateModeUI();
+        inputLabel =
+            document.getElementById("inputLabel");
 
-    /*
-     * Arrow buttons
-     */
-    previousModeButton.addEventListener(
-        "click",
-        () => {
-            previousMode();
-        }
-    );
+        searchInput =
+            document.getElementById("searchInput");
 
-    nextModeButton.addEventListener(
-        "click",
-        () => {
-            nextMode();
-        }
-    );
+        searchButton =
+            document.getElementById("searchButton");
 
-    /*
-     * Search button
-     */
-    searchButton.addEventListener(
-        "click",
-        () => {
-            search();
-        }
-    );
+        previousModeButton =
+            document.getElementById("previousMode");
 
-    /*
-     * Enter key
-     */
-    searchInput.addEventListener(
-        "keydown",
-        (event) => {
+        nextModeButton =
+            document.getElementById("nextMode");
 
-            if (event.key === "Enter") {
-                event.preventDefault();
-                search();
+        modeWrapper =
+            document.getElementById("modeWrapper");
+
+        results =
+            document.getElementById("results");
+
+
+        updateModeUI();
+
+
+        previousModeButton.addEventListener(
+            "click",
+            previousMode
+        );
+
+
+        nextModeButton.addEventListener(
+            "click",
+            nextMode
+        );
+
+
+        searchButton.addEventListener(
+            "click",
+            search
+        );
+
+
+        searchInput.addEventListener(
+            "keydown",
+            (event) => {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    search();
+                }
             }
-        }
-    );
+        );
 
-    /*
-     * PC arrow keys
-     */
-    document.addEventListener(
-        "keydown",
-        handleKeyboard
-    );
 
-    /*
-     * Mobile swipe
-     */
-    setupSwipe();
+        document.addEventListener(
+            "keydown",
+            handleKeyboard
+        );
 
-    /*
-     * Load compound database
-     */
-    loadCompounds();
-});
+
+        setupSwipe();
+
+
+        loadCompounds();
+    }
+);
 
 
 /* =========================================================
@@ -105,26 +112,36 @@ async function loadCompounds() {
     try {
 
         const response =
-            await fetch("compds.json", {
-                cache: "no-cache"
-            });
+            await fetch(
+                "compds.json",
+                {
+                    cache: "no-cache"
+                }
+            );
+
 
         if (!response.ok) {
+
             throw new Error(
                 `HTTP ${response.status}`
             );
         }
 
+
         const data =
             await response.json();
 
+
         if (!Array.isArray(data)) {
+
             throw new Error(
                 "compds.json must contain an array."
             );
         }
 
+
         compounds = data;
+
 
         console.log(
             `MoleFind: ${compounds.length} compounds loaded.`
@@ -136,6 +153,7 @@ async function loadCompounds() {
             "MoleFind database error:",
             error
         );
+
 
         results.innerHTML = `
             <div class="error">
@@ -156,10 +174,6 @@ function setMode(mode) {
 
     updateModeUI();
 
-    /*
-     * Keep the current input.
-     * Do not clear it when switching modes.
-     */
     searchInput.focus();
 }
 
@@ -169,9 +183,16 @@ function nextMode() {
     if (
         currentMode === SEARCH_MODES.SMILES
     ) {
-        setMode(SEARCH_MODES.FORMULA);
+
+        setMode(
+            SEARCH_MODES.FORMULA
+        );
+
     } else {
-        setMode(SEARCH_MODES.SMILES);
+
+        setMode(
+            SEARCH_MODES.SMILES
+        );
     }
 }
 
@@ -181,18 +202,21 @@ function previousMode() {
     if (
         currentMode === SEARCH_MODES.SMILES
     ) {
-        setMode(SEARCH_MODES.FORMULA);
+
+        setMode(
+            SEARCH_MODES.FORMULA
+        );
+
     } else {
-        setMode(SEARCH_MODES.SMILES);
+
+        setMode(
+            SEARCH_MODES.SMILES
+        );
     }
 }
 
 
 function updateModeUI() {
-
-    if (!modeName) {
-        return;
-    }
 
     if (
         currentMode === SEARCH_MODES.SMILES
@@ -227,24 +251,26 @@ function updateModeUI() {
 
 function handleKeyboard(event) {
 
-    /*
-     * While typing in the input field,
-     * left/right must remain cursor controls.
-     */
     if (
         document.activeElement === searchInput
     ) {
         return;
     }
 
-    if (event.key === "ArrowLeft") {
+
+    if (
+        event.key === "ArrowLeft"
+    ) {
 
         event.preventDefault();
 
         previousMode();
     }
 
-    if (event.key === "ArrowRight") {
+
+    if (
+        event.key === "ArrowRight"
+    ) {
 
         event.preventDefault();
 
@@ -260,6 +286,7 @@ function handleKeyboard(event) {
 let touchStartX = 0;
 let touchStartY = 0;
 
+
 function setupSwipe() {
 
     modeWrapper.addEventListener(
@@ -271,6 +298,7 @@ function setupSwipe() {
             ) {
                 return;
             }
+
 
             touchStartX =
                 event.touches[0].clientX;
@@ -294,26 +322,31 @@ function setupSwipe() {
                 return;
             }
 
+
             const touch =
                 event.changedTouches[0];
 
+
             const deltaX =
-                touch.clientX - touchStartX;
+                touch.clientX -
+                touchStartX;
+
 
             const deltaY =
-                touch.clientY - touchStartY;
+                touch.clientY -
+                touchStartY;
+
 
             const minimumDistance = 60;
 
-            /*
-             * Ignore vertical scrolling.
-             */
+
             if (
                 Math.abs(deltaX) <
                 minimumDistance
             ) {
                 return;
             }
+
 
             if (
                 Math.abs(deltaX) <=
@@ -322,9 +355,13 @@ function setupSwipe() {
                 return;
             }
 
+
             if (deltaX < 0) {
+
                 nextMode();
+
             } else {
+
                 previousMode();
             }
         },
@@ -344,6 +381,7 @@ function search() {
     const query =
         searchInput.value.trim();
 
+
     if (!query) {
 
         results.innerHTML = `
@@ -355,7 +393,9 @@ function search() {
         return;
     }
 
+
     let matches;
+
 
     if (
         currentMode === SEARCH_MODES.SMILES
@@ -369,6 +409,7 @@ function search() {
         matches =
             searchByFormula(query);
     }
+
 
     renderResults(
         query,
@@ -386,6 +427,7 @@ function searchBySMILES(query) {
     const normalizedQuery =
         normalizeSMILES(query);
 
+
     return compounds.filter(
         (compound) => {
 
@@ -393,10 +435,12 @@ function searchBySMILES(query) {
                 return false;
             }
 
+
             const smilesList =
                 Array.isArray(compound.smiles)
                     ? compound.smiles
                     : [compound.smiles];
+
 
             return smilesList.some(
                 (smiles) => {
@@ -421,7 +465,7 @@ function normalizeSMILES(smiles) {
 
 
 /* =========================================================
-   Formula search
+   Molecular formula search
    ========================================================= */
 
 function searchByFormula(query) {
@@ -429,12 +473,14 @@ function searchByFormula(query) {
     const normalizedQuery =
         normalizeFormula(query);
 
+
     return compounds.filter(
         (compound) => {
 
             if (!compound.formula) {
                 return false;
             }
+
 
             return (
                 normalizeFormula(
@@ -453,7 +499,9 @@ function normalizeFormula(formula) {
             .trim()
             .replace(/\s+/g, "");
 
+
     const subscriptMap = {
+
         "₀": "0",
         "₁": "1",
         "₂": "2",
@@ -466,22 +514,28 @@ function normalizeFormula(formula) {
         "₉": "9"
     };
 
+
     value = value.replace(
         /[₀₁₂₃₄₅₆₇₈₉]/g,
         (character) =>
             subscriptMap[character]
     );
 
+
     const matches =
         value.match(
             /([A-Za-z]{1,2})(\d*)/g
         );
 
+
     if (!matches) {
+
         return value.toLowerCase();
     }
 
+
     const elements = {};
+
 
     for (const token of matches) {
 
@@ -490,9 +544,11 @@ function normalizeFormula(formula) {
                 /^([A-Za-z]{1,2})(\d*)$/
             );
 
+
         if (!match) {
             continue;
         }
+
 
         const symbol =
             match[1][0].toUpperCase() +
@@ -500,15 +556,18 @@ function normalizeFormula(formula) {
                 .slice(1)
                 .toLowerCase();
 
+
         const count =
             match[2]
                 ? Number(match[2])
                 : 1;
 
+
         elements[symbol] =
             (elements[symbol] || 0) +
             count;
     }
+
 
     return Object.keys(elements)
         .sort()
@@ -547,12 +606,14 @@ function renderResults(
         return;
     }
 
+
     const cards =
         matches
             .map(
                 renderCompoundCard
             )
             .join("");
+
 
     results.innerHTML = `
         <p class="result-summary">
@@ -562,7 +623,10 @@ function renderResults(
                     ? "compound"
                     : "compounds"
             }
-            found.
+            found for
+            <strong>
+                ${escapeHTML(query)}
+            </strong>.
         </p>
 
         ${cards}
@@ -570,9 +634,11 @@ function renderResults(
 }
 
 
-function renderCompoundCard(
-    compound
-) {
+/* =========================================================
+   Compound card
+   ========================================================= */
+
+function renderCompoundCard(compound) {
 
     const smilesList =
         Array.isArray(compound.smiles)
@@ -580,6 +646,15 @@ function renderCompoundCard(
             : compound.smiles
                 ? [compound.smiles]
                 : [];
+
+
+    const scholarURL =
+        "https://scholar.google.com/scholar" +
+        "?hl=ja&as_sdt=0%2C5&q=" +
+        encodeURIComponent(
+            compound.name || ""
+        );
+
 
     return `
         <article class="result-card">
@@ -591,20 +666,24 @@ function renderCompoundCard(
                 )}
             </h2>
 
+
             ${renderProperty(
                 "Formula",
                 compound.formula
             )}
+
 
             ${renderProperty(
                 "SMILES",
                 smilesList.join("\n")
             )}
 
+
             ${renderProperty(
                 "CAS RN",
                 compound.cas
             )}
+
 
             ${renderProperty(
                 "Molar mass",
@@ -612,6 +691,58 @@ function renderCompoundCard(
                     compound.molar_mass
                 )
             )}
+
+
+            ${renderProperty(
+                "Boiling point",
+                compound.boiling_point
+            )}
+
+
+            ${renderProperty(
+                "Density",
+                compound.density
+            )}
+
+
+            ${renderProperty(
+                "LogP",
+                compound.logp
+            )}
+
+
+            ${renderProperty(
+                "Functional group",
+                formatList(
+                    compound.functional_groups
+                )
+            )}
+
+
+            ${renderProperty(
+                "Acid / base",
+                compound.acid_base
+            )}
+
+
+            ${renderProperty(
+                "IUPAC name",
+                compound.iupac_name
+            )}
+
+
+            ${renderProperty(
+                "InChIKey",
+                compound.inchi_key
+            )}
+
+
+            ${renderPropertyLink(
+                "Google Scholar",
+                scholarURL,
+                `Search ${compound.name || "this compound"}`
+            )}
+
 
             ${renderProperty(
                 "Description",
@@ -623,6 +754,10 @@ function renderCompoundCard(
 }
 
 
+/* =========================================================
+   Properties
+   ========================================================= */
+
 function renderProperty(
     name,
     value
@@ -633,24 +768,63 @@ function renderProperty(
         value === null ||
         value === ""
     ) {
+
         return "";
     }
 
+
     return `
         <div class="property">
-
             <span class="property-name">
                 ${escapeHTML(name)}
             </span>
 
             <span class="property-value">
                 ${escapeHTML(
-                    String(value)
+                    String(value).trim()
                 )}
             </span>
-
         </div>
     `;
+}
+
+
+function renderPropertyLink(
+    name,
+    url,
+    text
+) {
+
+    if (!url) {
+        return "";
+    }
+
+
+    return `
+        <div class="property">
+            <span class="property-name">
+                ${escapeHTML(name)}
+            </span>
+
+            <span class="property-value">
+                <a
+                    href="${escapeHTML(url)}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >${escapeHTML(text)}</a>
+            </span>
+        </div>
+    `;
+}
+
+
+function formatList(value) {
+
+    if (Array.isArray(value)) {
+        return value.join(", ");
+    }
+
+    return value;
 }
 
 
@@ -661,30 +835,50 @@ function formatMolarMass(value) {
         value === null ||
         value === ""
     ) {
+
         return "";
     }
+
 
     const number =
         Number(value);
 
+
     if (!Number.isFinite(number)) {
+
         return String(value);
     }
+
 
     return `${number.toFixed(3)} g/mol`;
 }
 
 
 /* =========================================================
-   Security
+   HTML escaping
    ========================================================= */
 
 function escapeHTML(value) {
 
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 }
