@@ -27,7 +27,7 @@ let results;
 
 document.addEventListener(
     "DOMContentLoaded",
-    () => {
+    async () => {
 
         modeName =
             document.getElementById("modeName");
@@ -98,7 +98,18 @@ document.addEventListener(
         setupSwipe();
 
 
-        loadCompounds();
+        /*
+         * データベースの読み込みが完了してから
+         * URLの ?q= を処理する。
+         */
+        const loaded =
+            await loadCompounds();
+
+
+        if (loaded) {
+
+            runURLQuery();
+        }
     }
 );
 
@@ -147,6 +158,9 @@ async function loadCompounds() {
             `MoleFind: ${compounds.length} compounds loaded.`
         );
 
+
+        return true;
+
     } catch (error) {
 
         console.error(
@@ -157,7 +171,72 @@ async function loadCompounds() {
 
         results.innerHTML =
             '<div class="error">Failed to load the compound database.</div>';
+
+
+        return false;
     }
+}
+
+
+/* =========================================================
+   URL query
+   ========================================================= */
+
+/*
+ * ?q=CCO
+ *
+ * URLから q パラメータが指定された場合、
+ * 必ずSMILESとして検索する。
+ *
+ * 例:
+ * https://t1site.github.io/MoleFind/?q=CCO
+ *
+ * この場合:
+ * - 検索モード → SMILES
+ * - 入力欄 → CCO
+ * - 自動的に検索
+ */
+
+function runURLQuery() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    if (!params.has("q")) {
+        return;
+    }
+
+
+    const query =
+        params.get("q");
+
+
+    if (
+        query === null ||
+        query.trim() === ""
+    ) {
+        return;
+    }
+
+
+    /*
+     * ?q= は常にSMILES検索。
+     */
+    currentMode =
+        SEARCH_MODES.SMILES;
+
+
+    updateModeUI();
+
+
+    searchInput.value =
+        query;
+
+
+    search();
 }
 
 
@@ -722,13 +801,6 @@ function renderCompoundCard(compound) {
 /* =========================================================
    Properties
    ========================================================= */
-
-/*
- * 重要:
- * property-value の開始タグと値を同じ行にすることで、
- * テンプレートリテラル由来の改行・インデントが
- * 表示文字列に混入しないようにしている。
- */
 
 function renderProperty(name, value) {
 
