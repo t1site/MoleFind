@@ -12,7 +12,7 @@
 
     <meta
         name="description"
-        content="Search chemical compounds by SMILES or molecular formula."
+        content="Search chemical compounds by SMILES, molecular formula, or InChIKey."
     >
 
     <style>
@@ -26,9 +26,11 @@
             --accent-hover: #0066d6;
         }
 
+
         * {
             box-sizing: border-box;
         }
+
 
         html {
             font-family:
@@ -41,64 +43,91 @@
                 sans-serif;
         }
 
+
         body {
             margin: 0;
             min-height: 100vh;
+
             background: var(--background);
             color: var(--text);
         }
+
 
         header {
             padding: 32px 20px 20px;
             text-align: center;
         }
 
+
         .logo {
             margin: 0;
+
             font-size: 42px;
             font-weight: 700;
             letter-spacing: -1.5px;
         }
 
+
         .tagline {
             margin: 8px 0 0;
+
             color: var(--secondary);
             font-size: 15px;
         }
 
+
         main {
-            width: min(720px, calc(100% - 32px));
+            width: min(
+                720px,
+                calc(100% - 32px)
+            );
+
             margin: 0 auto 60px;
         }
 
+
         .search-panel {
             background: var(--surface);
+
             border: 1px solid var(--border);
             border-radius: 18px;
+
             padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+
+            box-shadow:
+                0 4px 20px
+                rgba(0, 0, 0, 0.04);
+
             overflow: hidden;
         }
 
+
         .mode-wrapper {
             overflow: hidden;
+
             touch-action: pan-y;
             user-select: none;
         }
 
+
         .mode-selector {
             display: flex;
+
             align-items: center;
             justify-content: center;
+
             gap: 18px;
+
             margin-bottom: 18px;
         }
+
 
         .mode-arrow {
             width: 42px;
             height: 42px;
 
             display: flex;
+
             align-items: center;
             justify-content: center;
 
@@ -109,30 +138,41 @@
             color: var(--text);
 
             font-size: 22px;
+
             cursor: pointer;
         }
+
 
         .mode-arrow:hover {
             background: #f0f0f2;
         }
 
+
         .mode-arrow:active {
             transform: scale(0.94);
         }
 
+
         #modeName {
             min-width: 170px;
+
             text-align: center;
+
             font-size: 15px;
             font-weight: 700;
         }
 
+
         .input-label {
             display: block;
+
             margin-bottom: 8px;
+
             font-size: 13px;
+
             color: var(--secondary);
         }
+
 
         #searchInput {
             width: 100%;
@@ -152,12 +192,15 @@
             font-family: inherit;
         }
 
+
         #searchInput:focus {
             border-color: var(--accent);
+
             box-shadow:
                 0 0 0 3px
                 rgba(0, 122, 255, 0.15);
         }
+
 
         #searchButton {
             width: 100%;
@@ -177,13 +220,16 @@
             cursor: pointer;
         }
 
+
         #searchButton:hover {
             background: var(--accent-hover);
         }
 
+
         #searchButton:active {
             transform: scale(0.99);
         }
+
 
         .hint {
             margin: 12px 2px 0;
@@ -191,21 +237,28 @@
             text-align: center;
 
             color: var(--secondary);
+
             font-size: 12px;
         }
+
 
         #results {
             margin-top: 24px;
         }
 
+
         .result-summary {
             margin: 0 0 12px;
+
             color: var(--secondary);
+
             font-size: 14px;
         }
 
+
         .result-card {
             margin-bottom: 12px;
+
             padding: 18px;
 
             background: var(--surface);
@@ -214,13 +267,17 @@
             border-radius: 16px;
         }
 
+
         .result-name {
             margin: 0 0 12px;
+
             font-size: 20px;
         }
 
+
         .property {
             display: flex;
+
             gap: 12px;
 
             padding: 8px 0;
@@ -230,29 +287,38 @@
             font-size: 14px;
         }
 
+
         .property:first-of-type {
             border-top: 0;
         }
 
+
         .property-name {
             min-width: 150px;
+
             color: var(--secondary);
         }
 
+
         .property-value {
             flex: 1;
+
             overflow-wrap: anywhere;
             white-space: pre-wrap;
         }
 
+
         .property-value a {
             color: var(--accent);
+
             text-decoration: none;
         }
+
 
         .property-value a:hover {
             text-decoration: underline;
         }
+
 
         .empty,
         .error {
@@ -268,9 +334,11 @@
             color: var(--secondary);
         }
 
+
         .error {
             color: #c62828;
         }
+
 
         .js-warning {
             margin: 20px auto;
@@ -290,15 +358,20 @@
             color: #664d03;
         }
 
+
         .js-warning strong {
             display: block;
+
             margin-bottom: 6px;
         }
 
+
         .js-warning p {
             margin: 0;
+
             font-size: 14px;
         }
+
 
         footer {
             padding: 20px;
@@ -306,14 +379,17 @@
             text-align: center;
 
             color: var(--secondary);
+
             font-size: 12px;
         }
+
 
         @media (max-width: 600px) {
 
             .logo {
                 font-size: 36px;
             }
+
 
             main {
                 width: min(
@@ -322,14 +398,18 @@
                 );
             }
 
+
             .search-panel {
                 padding: 16px;
             }
 
+
             .property {
                 flex-direction: column;
+
                 gap: 2px;
             }
+
 
             .property-name {
                 min-width: auto;
@@ -338,10 +418,12 @@
     </style>
 </head>
 
+
 <body>
 
     <noscript>
         <div class="js-warning">
+
             <strong>
                 JavaScript is required.
             </strong>
@@ -350,16 +432,22 @@
                 MoleFind requires JavaScript to search compounds.
                 Please enable JavaScript in your browser and reload this page.
             </p>
+
         </div>
     </noscript>
 
 
     <header>
-        <h1 class="logo">MoleFind</h1>
+
+        <h1 class="logo">
+            MoleFind
+        </h1>
+
 
         <p class="tagline">
-            Search compounds by SMILES or molecular formula.
+            Search chemical compounds by SMILES, molecular formula, or InChIKey.
         </p>
+
     </header>
 
 
@@ -384,9 +472,11 @@
                         ←
                     </button>
 
+
                     <span id="modeName">
                         SMILES
                     </span>
+
 
                     <button
                         id="nextMode"
