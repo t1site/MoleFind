@@ -155,11 +155,8 @@ async function loadCompounds() {
         );
 
 
-        results.innerHTML = `
-            <div class="error">
-                Failed to load the compound database.
-            </div>
-        `;
+        results.innerHTML =
+            '<div class="error">Failed to load the compound database.</div>';
     }
 }
 
@@ -384,11 +381,8 @@ function search() {
 
     if (!query) {
 
-        results.innerHTML = `
-            <div class="empty">
-                Enter a search query.
-            </div>
-        `;
+        results.innerHTML =
+            '<div class="empty">Enter a search query.</div>';
 
         return;
     }
@@ -501,7 +495,6 @@ function normalizeFormula(formula) {
 
 
     const subscriptMap = {
-
         "₀": "0",
         "₁": "1",
         "₂": "2",
@@ -597,11 +590,8 @@ function renderResults(
 
     if (matches.length === 0) {
 
-        results.innerHTML = `
-            <div class="empty">
-                No matching compounds found.
-            </div>
-        `;
+        results.innerHTML =
+            '<div class="empty">No matching compounds found.</div>';
 
         return;
     }
@@ -616,21 +606,11 @@ function renderResults(
 
 
     results.innerHTML = `
-        <p class="result-summary">
-            ${matches.length}
-            ${
-                matches.length === 1
-                    ? "compound"
-                    : "compounds"
-            }
-            found for
-            <strong>
-                ${escapeHTML(query)}
-            </strong>.
-        </p>
-
-        ${cards}
-    `;
+        <p class="result-summary">` +
+        `${matches.length} ` +
+        `${matches.length === 1 ? "compound" : "compounds"} ` +
+        `found for <strong>${escapeHTML(query)}</strong>.</p>` +
+        cards;
 }
 
 
@@ -659,31 +639,25 @@ function renderCompoundCard(compound) {
     return `
         <article class="result-card">
 
-            <h2 class="result-name">
-                ${escapeHTML(
-                    compound.name ||
-                    "Unnamed compound"
-                )}
-            </h2>
-
+            <h2 class="result-name">${escapeHTML(
+                compound.name ||
+                "Unnamed compound"
+            )}</h2>
 
             ${renderProperty(
                 "Formula",
                 compound.formula
             )}
 
-
             ${renderProperty(
                 "SMILES",
                 smilesList.join("\n")
             )}
 
-
             ${renderProperty(
                 "CAS RN",
                 compound.cas
             )}
-
 
             ${renderProperty(
                 "Molar mass",
@@ -692,24 +666,20 @@ function renderCompoundCard(compound) {
                 )
             )}
 
-
             ${renderProperty(
                 "Boiling point",
                 compound.boiling_point
             )}
-
 
             ${renderProperty(
                 "Density",
                 compound.density
             )}
 
-
             ${renderProperty(
                 "LogP",
                 compound.logp
             )}
-
 
             ${renderProperty(
                 "Functional group",
@@ -718,31 +688,26 @@ function renderCompoundCard(compound) {
                 )
             )}
 
-
             ${renderProperty(
                 "Acid / base",
                 compound.acid_base
             )}
-
 
             ${renderProperty(
                 "IUPAC name",
                 compound.iupac_name
             )}
 
-
             ${renderProperty(
                 "InChIKey",
                 compound.inchi_key
             )}
-
 
             ${renderPropertyLink(
                 "Google Scholar",
                 scholarURL,
                 `Search ${compound.name || "this compound"}`
             )}
-
 
             ${renderProperty(
                 "Description",
@@ -758,32 +723,37 @@ function renderCompoundCard(compound) {
    Properties
    ========================================================= */
 
-function renderProperty(
-    name,
-    value
-) {
+/*
+ * 重要:
+ * property-value の開始タグと値を同じ行にすることで、
+ * テンプレートリテラル由来の改行・インデントが
+ * 表示文字列に混入しないようにしている。
+ */
+
+function renderProperty(name, value) {
 
     if (
         value === undefined ||
         value === null ||
         value === ""
     ) {
+        return "";
+    }
 
+
+    const cleanValue =
+        String(value).trim();
+
+
+    if (cleanValue === "") {
         return "";
     }
 
 
     return `
         <div class="property">
-            <span class="property-name">
-                ${escapeHTML(name)}
-            </span>
-
-            <span class="property-value">
-                ${escapeHTML(
-                    String(value).trim()
-                )}
-            </span>
+            <span class="property-name">${escapeHTML(name)}</span>
+            <span class="property-value">${escapeHTML(cleanValue)}</span>
         </div>
     `;
 }
@@ -802,17 +772,8 @@ function renderPropertyLink(
 
     return `
         <div class="property">
-            <span class="property-name">
-                ${escapeHTML(name)}
-            </span>
-
-            <span class="property-value">
-                <a
-                    href="${escapeHTML(url)}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >${escapeHTML(text)}</a>
-            </span>
+            <span class="property-name">${escapeHTML(name)}</span>
+            <span class="property-value"><a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(text)}</a></span>
         </div>
     `;
 }
@@ -821,8 +782,15 @@ function renderPropertyLink(
 function formatList(value) {
 
     if (Array.isArray(value)) {
+
+        if (value.length === 0) {
+            return "";
+        }
+
+
         return value.join(", ");
     }
+
 
     return value;
 }
@@ -835,7 +803,6 @@ function formatMolarMass(value) {
         value === null ||
         value === ""
     ) {
-
         return "";
     }
 
