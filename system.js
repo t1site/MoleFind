@@ -1,13 +1,5 @@
 "use strict";
 
-/*
- * MoleFind
- *
- * Search modes:
- *   0 = SMILES
- *   1 = Molecular Formula
- */
-
 const SEARCH_MODES = {
     SMILES: 0,
     FORMULA: 1
@@ -16,42 +8,92 @@ const SEARCH_MODES = {
 let currentMode = SEARCH_MODES.SMILES;
 let compounds = [];
 
-const modeName =
-    document.getElementById("modeName");
-
-const inputLabel =
-    document.getElementById("inputLabel");
-
-const searchInput =
-    document.getElementById("searchInput");
-
-const searchButton =
-    document.getElementById("searchButton");
-
-const previousModeButton =
-    document.getElementById("previousMode");
-
-const nextModeButton =
-    document.getElementById("nextMode");
-
-const modeWrapper =
-    document.getElementById("modeWrapper");
-
-const results =
-    document.getElementById("results");
+let modeName;
+let inputLabel;
+let searchInput;
+let searchButton;
+let previousModeButton;
+let nextModeButton;
+let modeWrapper;
+let results;
 
 
 /* =========================================================
    Initialisation
    ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
-        updateModeUI();
-        await loadCompounds();
-    }
-);
+document.addEventListener("DOMContentLoaded", () => {
+
+    modeName = document.getElementById("modeName");
+    inputLabel = document.getElementById("inputLabel");
+    searchInput = document.getElementById("searchInput");
+    searchButton = document.getElementById("searchButton");
+    previousModeButton = document.getElementById("previousMode");
+    nextModeButton = document.getElementById("nextMode");
+    modeWrapper = document.getElementById("modeWrapper");
+    results = document.getElementById("results");
+
+    updateModeUI();
+
+    /*
+     * Arrow buttons
+     */
+    previousModeButton.addEventListener(
+        "click",
+        () => {
+            previousMode();
+        }
+    );
+
+    nextModeButton.addEventListener(
+        "click",
+        () => {
+            nextMode();
+        }
+    );
+
+    /*
+     * Search button
+     */
+    searchButton.addEventListener(
+        "click",
+        () => {
+            search();
+        }
+    );
+
+    /*
+     * Enter key
+     */
+    searchInput.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                search();
+            }
+        }
+    );
+
+    /*
+     * PC arrow keys
+     */
+    document.addEventListener(
+        "keydown",
+        handleKeyboard
+    );
+
+    /*
+     * Mobile swipe
+     */
+    setupSwipe();
+
+    /*
+     * Load compound database
+     */
+    loadCompounds();
+});
 
 
 /* =========================================================
@@ -59,21 +101,22 @@ document.addEventListener(
    ========================================================= */
 
 async function loadCompounds() {
+
     try {
-        const response = await fetch(
-            "compds.json",
-            {
+
+        const response =
+            await fetch("compds.json", {
                 cache: "no-cache"
-            }
-        );
+            });
 
         if (!response.ok) {
             throw new Error(
-                `Failed to load compds.json (${response.status})`
+                `HTTP ${response.status}`
             );
         }
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
         if (!Array.isArray(data)) {
             throw new Error(
@@ -83,8 +126,16 @@ async function loadCompounds() {
 
         compounds = data;
 
+        console.log(
+            `MoleFind: ${compounds.length} compounds loaded.`
+        );
+
     } catch (error) {
-        console.error(error);
+
+        console.error(
+            "MoleFind database error:",
+            error
+        );
 
         results.innerHTML = `
             <div class="error">
@@ -101,16 +152,15 @@ async function loadCompounds() {
 
 function setMode(mode) {
 
-    if (
-        mode !== SEARCH_MODES.SMILES &&
-        mode !== SEARCH_MODES.FORMULA
-    ) {
-        return;
-    }
-
     currentMode = mode;
 
     updateModeUI();
+
+    /*
+     * Keep the current input.
+     * Do not clear it when switching modes.
+     */
+    searchInput.focus();
 }
 
 
@@ -140,179 +190,149 @@ function previousMode() {
 
 function updateModeUI() {
 
-    const isSMILES =
-        currentMode === SEARCH_MODES.SMILES;
+    if (!modeName) {
+        return;
+    }
 
-    modeName.textContent =
-        isSMILES
-            ? "SMILES"
-            : "Molecular Formula";
+    if (
+        currentMode === SEARCH_MODES.SMILES
+    ) {
 
-    inputLabel.textContent =
-        isSMILES
-            ? "SMILES"
-            : "Molecular Formula";
+        modeName.textContent =
+            "SMILES";
 
-    searchInput.placeholder =
-        isSMILES
-            ? "e.g. CCO"
-            : "e.g. C2H6O";
+        inputLabel.textContent =
+            "SMILES";
+
+        searchInput.placeholder =
+            "e.g. CCO";
+
+    } else {
+
+        modeName.textContent =
+            "Molecular Formula";
+
+        inputLabel.textContent =
+            "Molecular Formula";
+
+        searchInput.placeholder =
+            "e.g. C2H6O";
+    }
 }
 
 
 /* =========================================================
-   Arrow buttons
+   Keyboard
    ========================================================= */
 
-previousModeButton.addEventListener(
-    "click",
-    previousMode
-);
+function handleKeyboard(event) {
 
-nextModeButton.addEventListener(
-    "click",
-    nextMode
-);
-
-
-/* =========================================================
-   PC keyboard controls
-   ========================================================= */
-
-document.addEventListener(
-    "keydown",
-    (event) => {
-
-        /*
-         * Do not intercept arrow keys while
-         * editing the search field.
-         */
-        if (
-            document.activeElement === searchInput
-        ) {
-            return;
-        }
-
-        if (event.key === "ArrowLeft") {
-
-            event.preventDefault();
-
-            previousMode();
-        }
-
-        if (event.key === "ArrowRight") {
-
-            event.preventDefault();
-
-            nextMode();
-        }
+    /*
+     * While typing in the input field,
+     * left/right must remain cursor controls.
+     */
+    if (
+        document.activeElement === searchInput
+    ) {
+        return;
     }
-);
 
+    if (event.key === "ArrowLeft") {
 
-/* =========================================================
-   Enter key
-   ========================================================= */
+        event.preventDefault();
 
-searchInput.addEventListener(
-    "keydown",
-    (event) => {
-
-        if (event.key === "Enter") {
-
-            event.preventDefault();
-
-            search();
-        }
+        previousMode();
     }
-);
 
+    if (event.key === "ArrowRight") {
 
-searchButton.addEventListener(
-    "click",
-    search
-);
+        event.preventDefault();
+
+        nextMode();
+    }
+}
 
 
 /* =========================================================
-   Touch / swipe
+   Swipe
    ========================================================= */
 
 let touchStartX = 0;
 let touchStartY = 0;
-let touchStartTime = 0;
 
+function setupSwipe() {
 
-modeWrapper.addEventListener(
-    "touchstart",
-    (event) => {
+    modeWrapper.addEventListener(
+        "touchstart",
+        (event) => {
 
-        if (
-            event.touches.length !== 1
-        ) {
-            return;
+            if (
+                event.touches.length !== 1
+            ) {
+                return;
+            }
+
+            touchStartX =
+                event.touches[0].clientX;
+
+            touchStartY =
+                event.touches[0].clientY;
+        },
+        {
+            passive: true
         }
-
-        touchStartX =
-            event.touches[0].clientX;
-
-        touchStartY =
-            event.touches[0].clientY;
-
-        touchStartTime =
-            Date.now();
-    },
-    {
-        passive: true
-    }
-);
+    );
 
 
-modeWrapper.addEventListener(
-    "touchend",
-    (event) => {
+    modeWrapper.addEventListener(
+        "touchend",
+        (event) => {
 
-        if (
-            event.changedTouches.length !== 1
-        ) {
-            return;
+            if (
+                event.changedTouches.length !== 1
+            ) {
+                return;
+            }
+
+            const touch =
+                event.changedTouches[0];
+
+            const deltaX =
+                touch.clientX - touchStartX;
+
+            const deltaY =
+                touch.clientY - touchStartY;
+
+            const minimumDistance = 60;
+
+            /*
+             * Ignore vertical scrolling.
+             */
+            if (
+                Math.abs(deltaX) <
+                minimumDistance
+            ) {
+                return;
+            }
+
+            if (
+                Math.abs(deltaX) <=
+                Math.abs(deltaY)
+            ) {
+                return;
+            }
+
+            if (deltaX < 0) {
+                nextMode();
+            } else {
+                previousMode();
+            }
+        },
+        {
+            passive: true
         }
-
-        const endX =
-            event.changedTouches[0].clientX;
-
-        const endY =
-            event.changedTouches[0].clientY;
-
-        const deltaX =
-            endX - touchStartX;
-
-        const deltaY =
-            endY - touchStartY;
-
-        const elapsed =
-            Date.now() - touchStartTime;
-
-        const minimumDistance = 60;
-
-        if (
-            elapsed > 800 ||
-            Math.abs(deltaX) < minimumDistance ||
-            Math.abs(deltaX) <= Math.abs(deltaY)
-        ) {
-            return;
-        }
-
-        if (deltaX < 0) {
-            nextMode();
-        } else {
-            previousMode();
-        }
-    },
-    {
-        passive: true
-    }
-);
+    );
+}
 
 
 /* =========================================================
@@ -321,10 +341,6 @@ modeWrapper.addEventListener(
 
 function search() {
 
-    if (compounds.length === 0) {
-        return;
-    }
-
     const query =
         searchInput.value.trim();
 
@@ -332,25 +348,26 @@ function search() {
 
         results.innerHTML = `
             <div class="empty">
-                Enter a ${
-                    currentMode === SEARCH_MODES.SMILES
-                        ? "SMILES notation"
-                        : "molecular formula"
-                }.
+                Enter a search query.
             </div>
         `;
 
         return;
     }
 
-    let matches = [];
+    let matches;
 
     if (
         currentMode === SEARCH_MODES.SMILES
     ) {
-        matches = searchBySMILES(query);
+
+        matches =
+            searchBySMILES(query);
+
     } else {
-        matches = searchByFormula(query);
+
+        matches =
+            searchByFormula(query);
     }
 
     renderResults(
@@ -376,37 +393,25 @@ function searchBySMILES(query) {
                 return false;
             }
 
-            /*
-             * Supports:
-             *
-             * "CCO"
-             *
-             * or
-             *
-             * ["CCO", "OCC"]
-             */
-
             const smilesList =
                 Array.isArray(compound.smiles)
                     ? compound.smiles
                     : [compound.smiles];
 
             return smilesList.some(
-                (smiles) =>
-                    normalizeSMILES(smiles) ===
-                    normalizedQuery
+                (smiles) => {
+
+                    return (
+                        normalizeSMILES(smiles) ===
+                        normalizedQuery
+                    );
+                }
             );
         }
     );
 }
 
 
-/*
- * Basic SMILES normalisation.
- *
- * This does NOT perform complete
- * chemical structure canonicalisation.
- */
 function normalizeSMILES(smiles) {
 
     return String(smiles)
@@ -416,7 +421,7 @@ function normalizeSMILES(smiles) {
 
 
 /* =========================================================
-   Molecular formula search
+   Formula search
    ========================================================= */
 
 function searchByFormula(query) {
@@ -440,10 +445,6 @@ function searchByFormula(query) {
     );
 }
 
-
-/* =========================================================
-   Molecular formula normalisation
-   ========================================================= */
 
 function normalizeFormula(formula) {
 
@@ -504,10 +505,6 @@ function normalizeFormula(formula) {
                 ? Number(match[2])
                 : 1;
 
-        if (!Number.isFinite(count)) {
-            continue;
-        }
-
         elements[symbol] =
             (elements[symbol] || 0) +
             count;
@@ -531,7 +528,7 @@ function normalizeFormula(formula) {
 
 
 /* =========================================================
-   Result rendering
+   Results
    ========================================================= */
 
 function renderResults(
@@ -550,18 +547,10 @@ function renderResults(
         return;
     }
 
-    const modeText =
-        currentMode === SEARCH_MODES.SMILES
-            ? "SMILES"
-            : "molecular formula";
-
     const cards =
         matches
             .map(
-                (compound) =>
-                    renderCompoundCard(
-                        compound
-                    )
+                renderCompoundCard
             )
             .join("");
 
@@ -573,20 +562,13 @@ function renderResults(
                     ? "compound"
                     : "compounds"
             }
-            found for ${escapeHTML(modeText)}:
-            <strong>
-                ${escapeHTML(query)}
-            </strong>
+            found.
         </p>
 
         ${cards}
     `;
 }
 
-
-/* =========================================================
-   Compound card
-   ========================================================= */
 
 function renderCompoundCard(
     compound
@@ -599,19 +581,14 @@ function renderCompoundCard(
                 ? [compound.smiles]
                 : [];
 
-    const smilesText =
-        smilesList.join("\n");
-
     return `
         <article class="result-card">
 
             <h2 class="result-name">
-                ${
-                    escapeHTML(
-                        compound.name ||
-                        "Unnamed compound"
-                    )
-                }
+                ${escapeHTML(
+                    compound.name ||
+                    "Unnamed compound"
+                )}
             </h2>
 
             ${renderProperty(
@@ -621,7 +598,7 @@ function renderCompoundCard(
 
             ${renderProperty(
                 "SMILES",
-                smilesText
+                smilesList.join("\n")
             )}
 
             ${renderProperty(
@@ -645,10 +622,6 @@ function renderCompoundCard(
     `;
 }
 
-
-/* =========================================================
-   Property rendering
-   ========================================================= */
 
 function renderProperty(
     name,
@@ -703,30 +676,15 @@ function formatMolarMass(value) {
 
 
 /* =========================================================
-   HTML escaping
+   Security
    ========================================================= */
 
 function escapeHTML(value) {
 
     return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
