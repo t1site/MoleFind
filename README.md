@@ -1,2 +1,0 @@
-# MoleFind
-Compounds search app
