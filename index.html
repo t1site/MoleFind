@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MoleFind</title>
+    <meta
+        name="description"
+        content="Search compounds by SMILES notation or molecular formula."
+    >
+
+    <style>
+        :root {
+            --background: #f5f5f7;
+            --surface: #ffffff;
+            --text: #1d1d1f;
+            --secondary: #6e6e73;
+            --border: #d2d2d7;
+            --accent: #007aff;
+            --accent-hover: #0066d6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        header {
+            padding: 32px 20px 20px;
+            text-align: center;
+        }
+
+        .logo {
+            margin: 0;
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+        }
+
+        .tagline {
+            margin: 8px 0 0;
+            color: var(--secondary);
+            font-size: 15px;
+        }
+
+        main {
+            width: min(720px, calc(100% - 32px));
+            margin: 0 auto 60px;
+        }
+
+        .search-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .mode-wrapper {
+            overflow: hidden;
+            touch-action: pan-y;
+            user-select: none;
+        }
+
+        .mode-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            margin-bottom: 18px;
+            font-size: 15px;
+            color: var(--secondary);
+        }
+
+        .mode-arrow {
+            font-size: 22px;
+            color: var(--secondary);
+        }
+
+        #modeName {
+            min-width: 150px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: var(--secondary);
+        }
+
+        #searchInput {
+            width: 100%;
+            min-height: 52px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            outline: none;
+            background: #fff;
+            color: var(--text);
+            font-size: 18px;
+            font-family: inherit;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        #searchInput:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+        }
+
+        #searchButton {
+            width: 100%;
+            min-height: 50px;
+            margin-top: 12px;
+            border: 0;
+            border-radius: 12px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #searchButton:hover {
+            background: var(--accent-hover);
+        }
+
+        #searchButton:active {
+            transform: scale(0.99);
+        }
+
+        .hint {
+            margin: 12px 2px 0;
+            text-align: center;
+            color: var(--secondary);
+            font-size: 12px;
+        }
+
+        #results {
+            margin-top: 24px;
+        }
+
+        .result-summary {
+            margin: 0 0 12px;
+            color: var(--secondary);
+            font-size: 14px;
+        }
+
+        .result-card {
+            margin-bottom: 12px;
+            padding: 18px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .result-name {
+            margin: 0 0 12px;
+            font-size: 20px;
+        }
+
+        .property {
+            display: flex;
+            gap: 12px;
+            padding: 7px 0;
+            border-top: 1px solid #eeeeee;
+            font-size: 14px;
+        }
+
+        .property:first-of-type {
+            border-top: 0;
+        }
+
+        .property-name {
+            min-width: 130px;
+            color: var(--secondary);
+        }
+
+        .property-value {
+            overflow-wrap: anywhere;
+        }
+
+        .empty,
+        .error {
+            padding: 24px;
+            text-align: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            color: var(--secondary);
+        }
+
+        .error {
+            color: #c62828;
+        }
+
+        footer {
+            padding: 20px;
+            text-align: center;
+            color: var(--secondary);
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .logo {
+                font-size: 36px;
+            }
+
+            main {
+                width: min(100% - 20px, 720px);
+            }
+
+            .search-panel {
+                padding: 16px;
+            }
+
+            .property {
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .property-name {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1 class="logo">MoleFind</h1>
+    <p class="tagline">
+        Search compounds by SMILES or molecular formula.
+    </p>
+</header>
+
+<main>
+    <section class="search-panel">
+
+        <div
+            id="modeWrapper"
+            class="mode-wrapper"
+            aria-label="Search mode selector"
+        >
+            <div class="mode-selector">
+                <span class="mode-arrow">←</span>
+                <span id="modeName">SMILES</span>
+                <span class="mode-arrow">→</span>
+            </div>
+
+            <label
+                id="inputLabel"
+                class="input-label"
+                for="searchInput"
+            >
+                SMILES
+            </label>
+
+            <input
+                id="searchInput"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="e.g. CCO"
+                aria-label="Search input"
+            >
+
+            <button id="searchButton" type="button">
+                Search
+            </button>
+
+            <p class="hint">
+                Swipe left/right on mobile. Use ← / → on PC.
+            </p>
+        </div>
+
+    </section>
+
+    <section id="results" aria-live="polite"></section>
+</main>
+
+<footer>
+    MoleFind
+</footer>
+
+<script src="system.js"></script>
+
+</body>
+</html>
