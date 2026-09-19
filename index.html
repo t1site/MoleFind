@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>MoleFind</title>
+
     <meta
         name="description"
         content="Search compounds by SMILES or molecular formula."
@@ -92,6 +96,7 @@
         .mode-arrow {
             width: 42px;
             height: 42px;
+
             display: flex;
             align-items: center;
             justify-content: center;
@@ -135,13 +140,15 @@
         #searchInput {
             width: 100%;
             min-height: 52px;
+
             padding: 12px 14px;
 
             border: 1px solid var(--border);
             border-radius: 12px;
 
             outline: none;
-            background: #fff;
+
+            background: #ffffff;
             color: var(--text);
 
             font-size: 18px;
@@ -154,19 +161,22 @@
 
         #searchInput:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+            box-shadow:
+                0 0 0 3px
+                rgba(0, 122, 255, 0.15);
         }
 
         #searchButton {
             width: 100%;
             min-height: 50px;
+
             margin-top: 12px;
 
             border: 0;
             border-radius: 12px;
 
             background: var(--accent);
-            color: #fff;
+            color: #ffffff;
 
             font-size: 16px;
             font-weight: 600;
@@ -184,7 +194,9 @@
 
         .hint {
             margin: 12px 2px 0;
+
             text-align: center;
+
             color: var(--secondary);
             font-size: 12px;
         }
@@ -195,6 +207,7 @@
 
         .result-summary {
             margin: 0 0 12px;
+
             color: var(--secondary);
             font-size: 14px;
         }
@@ -204,6 +217,7 @@
             padding: 18px;
 
             background: var(--surface);
+
             border: 1px solid var(--border);
             border-radius: 16px;
         }
@@ -218,6 +232,7 @@
             gap: 12px;
 
             padding: 7px 0;
+
             border-top: 1px solid #eeeeee;
 
             font-size: 14px;
@@ -244,6 +259,7 @@
             text-align: center;
 
             background: var(--surface);
+
             border: 1px solid var(--border);
             border-radius: 16px;
 
@@ -254,20 +270,60 @@
             color: #c62828;
         }
 
+        /*
+         * JavaScript disabled warning
+         *
+         * This block is only displayed when
+         * JavaScript is disabled.
+         */
+        .js-warning {
+            margin: 20px auto;
+
+            width: min(
+                720px,
+                calc(100% - 32px)
+            );
+
+            padding: 16px 18px;
+
+            background: #fff3cd;
+
+            border: 1px solid #ffecb5;
+            border-radius: 12px;
+
+            color: #664d03;
+        }
+
+        .js-warning strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .js-warning p {
+            margin: 0;
+            font-size: 14px;
+        }
+
         footer {
             padding: 20px;
+
             text-align: center;
+
             color: var(--secondary);
             font-size: 12px;
         }
 
         @media (max-width: 600px) {
+
             .logo {
                 font-size: 36px;
             }
 
             main {
-                width: min(100% - 20px, 720px);
+                width: min(
+                    100% - 20px,
+                    720px
+                );
             }
 
             .search-panel {
@@ -288,94 +344,128 @@
 
 <body>
 
-<header>
-    <h1 class="logo">MoleFind</h1>
+    <!--
+        This message is displayed only when
+        JavaScript is disabled.
+    -->
+    <noscript>
+        <div class="js-warning">
 
-    <p class="tagline">
-        Search compounds by SMILES or molecular formula.
-    </p>
-</header>
+            <strong>
+                JavaScript is required.
+            </strong>
 
-<main>
-
-    <section class="search-panel">
-
-        <div
-            id="modeWrapper"
-            class="mode-wrapper"
-            aria-label="Search mode selector"
-        >
-
-            <div class="mode-selector">
-
-                <button
-                    id="previousMode"
-                    class="mode-arrow"
-                    type="button"
-                    aria-label="Previous search mode"
-                >
-                    ←
-                </button>
-
-                <span id="modeName">
-                    SMILES
-                </span>
-
-                <button
-                    id="nextMode"
-                    class="mode-arrow"
-                    type="button"
-                    aria-label="Next search mode"
-                >
-                    →
-                </button>
-
-            </div>
-
-            <label
-                id="inputLabel"
-                class="input-label"
-                for="searchInput"
-            >
-                SMILES
-            </label>
-
-            <input
-                id="searchInput"
-                type="text"
-                autocomplete="off"
-                spellcheck="false"
-                placeholder="e.g. CCO"
-                aria-label="Search input"
-            >
-
-            <button
-                id="searchButton"
-                type="button"
-            >
-                Search
-            </button>
-
-            <p class="hint">
-                Swipe left/right on mobile. Use ← / → on PC.
+            <p>
+                MoleFind requires JavaScript to search compounds.
+                Please enable JavaScript in your browser
+                and reload this page.
             </p>
 
         </div>
+    </noscript>
 
-    </section>
 
-    <section
-        id="results"
-        aria-live="polite"
-    ></section>
+    <header>
 
-</main>
+        <h1 class="logo">
+            MoleFind
+        </h1>
 
-<footer>
-    ©2026 TAICHI1129
-</footer>
+        <p class="tagline">
+            Search compounds by SMILES or molecular formula.
+        </p>
 
-<script src="system.js"></script>
+    </header>
+
+
+    <main>
+
+        <section class="search-panel">
+
+            <div
+                id="modeWrapper"
+                class="mode-wrapper"
+                aria-label="Search mode selector"
+            >
+
+                <div class="mode-selector">
+
+                    <button
+                        id="previousMode"
+                        class="mode-arrow"
+                        type="button"
+                        aria-label="Previous search mode"
+                    >
+                        ←
+                    </button>
+
+                    <span id="modeName">
+                        SMILES
+                    </span>
+
+                    <button
+                        id="nextMode"
+                        class="mode-arrow"
+                        type="button"
+                        aria-label="Next search mode"
+                    >
+                        →
+                    </button>
+
+                </div>
+
+
+                <label
+                    id="inputLabel"
+                    class="input-label"
+                    for="searchInput"
+                >
+                    SMILES
+                </label>
+
+
+                <input
+                    id="searchInput"
+                    type="text"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="e.g. CCO"
+                    aria-label="Search input"
+                >
+
+
+                <button
+                    id="searchButton"
+                    type="button"
+                >
+                    Search
+                </button>
+
+
+                <p class="hint">
+                    Swipe left/right on mobile.
+                    Use ← / → on PC.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <section
+            id="results"
+            aria-live="polite"
+        ></section>
+
+    </main>
+
+
+    <footer>
+        ©2026 TAICHI1129
+    </footer>
+
+
+    <script src="system.js"></script>
 
 </body>
 </html>
