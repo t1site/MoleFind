@@ -1,81 +1,54 @@
 # MoleFind
 
-MoleFind is a simple web-based chemical compound search tool.
+MoleFind is a lightweight web-based chemical compound search tool.
 
-It allows users to search registered chemical compounds by:
+It allows users to search for chemical compounds using:
 
 - SMILES
-- Molecular formula
+- Molecular Formula
+- InChIKey
 
-MoleFind is designed to provide a simple and lightweight interface for quickly viewing chemical information.
+MoleFind is designed to provide a simple and fast way to find compound information from a structured JSON database.
 
 ## Features
 
-- Search compounds by SMILES
-- Search compounds by molecular formula
-- Support multiple SMILES representations for one compound
-- Normalize molecular formula notation
-- Support Unicode subscripts in molecular formulas
-- Display molecular formula
-- Display SMILES
-- Display CAS RN
-- Display molar mass
-- Display boiling point
-- Display density
-- Display LogP
-- Display functional groups
-- Display acid/base classification
-- Display IUPAC name
-- Display InChIKey
-- Search the compound on Google Scholar
-- Display a description of the compound
-- Mobile swipe support for switching search modes
-- Keyboard arrow-key support for switching search modes
-- Enter-key support for searching
-- Responsive design
-- JavaScript-disabled warning
+### Multiple Search Modes
 
-## Search Modes
+MoleFind supports three search methods:
 
-### SMILES
+#### SMILES
 
-Searches the database using a SMILES string.
+Search compounds by their SMILES representation.
 
 Example:
 
-`CCO`
+    CCO
 
-A compound can have multiple registered SMILES strings.
+#### Molecular Formula
+
+Search compounds by molecular formula.
 
 Example:
 
-`"smiles": ["CCO", "OCC"]`
+    C2H6O
 
-Both representations can be used to find ethanol.
+Element ordering and numerical subscripts are normalized during the search.
 
-### Molecular Formula
+#### InChIKey
 
-Searches compounds using their molecular formula.
+Search compounds by their InChIKey.
 
-Examples:
+Example:
 
-`H2O`
+    LFQSCWFLJHTTHZ-UHFFFAOYSA-N
 
-`C2H6O`
-
-`C6H6`
-
-Unicode subscripts are also supported.
-
-For example, `C₂H₆O` is normalized to `C2H6O`.
-
-Element symbol capitalization is also normalized.
+InChIKey searches are case-insensitive and whitespace is ignored.
 
 ## Compound Information
 
-Each compound can contain the following information:
+Depending on the data available in `compds.json`, MoleFind can display information such as:
 
-- Name
+- Compound name
 - Molecular formula
 - SMILES
 - CAS RN
@@ -88,74 +61,120 @@ Each compound can contain the following information:
 - IUPAC name
 - InChIKey
 - Description
+- Google Scholar search link
 
-A Google Scholar search link is automatically generated from the compound name.
+## Search Mode Navigation
 
-## Data Format
+Search modes can be changed using:
 
-Compound data is stored in `compds.json`.
+- The left arrow button
+- The right arrow button
+- The left/right arrow keys on a keyboard
+- Horizontal swipes on mobile devices
 
-A compound record uses the following fields:
+The search modes cycle through:
 
-- `name`
-- `formula`
-- `smiles`
-- `cas`
-- `molar_mass`
-- `boiling_point`
-- `density`
-- `logp`
-- `functional_groups`
-- `acid_base`
-- `iupac_name`
-- `inchi_key`
-- `description`
+    SMILES
+    ↓
+    Molecular Formula
+    ↓
+    InChIKey
+    ↓
+    SMILES
 
-The `smiles` field is an array so that multiple SMILES representations can be registered for one compound.
+## URL Search
 
-The `functional_groups` field is also an array because a compound can contain multiple functional groups.
+MoleFind supports searching through the `q` URL parameter.
 
-If no functional group is applicable, an empty array can be used.
+For example:
+
+    https://t1site.github.io/MoleFind/?q=CCO
+
+The `q` parameter is interpreted as a SMILES query.
 
 ## Project Structure
 
-MoleFind has a simple three-file structure:
+    MoleFind/
+    ├── index.html
+    ├── system.js
+    └── compds.json
 
-- `index.html` - User interface and styling
-- `system.js` - Search logic and application behavior
-- `compds.json` - Compound database
+### `index.html`
 
-## Technologies
+Contains the MoleFind user interface and styling.
 
-MoleFind uses:
+### `system.js`
+
+Contains the search system, database loading, search-mode management, result rendering, and user interaction logic.
+
+### `compds.json`
+
+Contains the compound database.
+
+The JSON database does not need to be modified to enable InChIKey searching, provided that each compound contains an `inchi_key` field.
+
+## Data Format
+
+A compound entry can contain fields such as:
+
+    {
+        "name": "Ethanol",
+        "formula": "C2H6O",
+        "smiles": "CCO",
+        "cas": "64-17-5",
+        "molar_mass": 46.069,
+        "inchi_key": "LFQSCWFLJHTTHZ-UHFFFAOYSA-N"
+    }
+
+Additional fields may be included.
+
+## Technology
+
+MoleFind is built using standard web technologies:
 
 - HTML
 - CSS
 - JavaScript
 - JSON
 
-No external JavaScript framework is required.
+No server-side application is required for the basic search functionality.
+
+The compound database is loaded directly from `compds.json`.
 
 ## Running Locally
 
-Because MoleFind loads `compds.json` using `fetch()`, it should be served through a local HTTP server rather than opened directly with the `file://` protocol.
+Clone the repository:
 
-For example, with Python:
+    git clone https://github.com/t1site/MoleFind.git
 
-`python -m http.server`
+Then open the project using a local web server.
+
+For example:
+
+    python -m http.server
 
 Then open:
 
-`http://localhost:8000/`
+    http://localhost:8000/
+
+A local web server is recommended because browsers may restrict `fetch()` requests for local files opened directly with `file://`.
 
 ## Deployment
 
 MoleFind can be deployed as a static website.
 
-GitHub Pages is suitable because MoleFind only requires static HTML, CSS, JavaScript, and JSON files.
+For example, it can be hosted using GitHub Pages.
+
+The project does not require a traditional backend server for its current search functionality.
 
 ## License
 
-Copyright © 2026 TAICHI1129.
+See the repository for the applicable license.
 
-The licensing terms of MoleFind are defined by the repository.
+## Author
+
+TAICHI1129
+
+GitHub:
+
+https://github.com/TAICHI1129
