@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
-<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/t1site/mf/refs/heads/main/favicon.png">
-
     <title>MoleFind</title>
     <meta
         name="description"
-        content="Search compounds by SMILES notation or molecular formula."
+        content="Search compounds by SMILES or molecular formula."
     >
 
     <style>
@@ -90,20 +87,42 @@
             justify-content: center;
             gap: 18px;
             margin-bottom: 18px;
-            font-size: 15px;
-            color: var(--secondary);
         }
 
         .mode-arrow {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid var(--border);
+            border-radius: 50%;
+
+            background: var(--surface);
+            color: var(--text);
+
             font-size: 22px;
-            color: var(--secondary);
+            cursor: pointer;
+
+            transition:
+                background 0.15s,
+                transform 0.1s;
+        }
+
+        .mode-arrow:hover {
+            background: #f0f0f2;
+        }
+
+        .mode-arrow:active {
+            transform: scale(0.94);
         }
 
         #modeName {
-            min-width: 150px;
+            min-width: 170px;
             text-align: center;
+            font-size: 15px;
             font-weight: 700;
-            color: var(--text);
         }
 
         .input-label {
@@ -117,14 +136,20 @@
             width: 100%;
             min-height: 52px;
             padding: 12px 14px;
+
             border: 1px solid var(--border);
             border-radius: 12px;
+
             outline: none;
             background: #fff;
             color: var(--text);
+
             font-size: 18px;
             font-family: inherit;
-            transition: border-color 0.15s, box-shadow 0.15s;
+
+            transition:
+                border-color 0.15s,
+                box-shadow 0.15s;
         }
 
         #searchInput:focus {
@@ -136,12 +161,16 @@
             width: 100%;
             min-height: 50px;
             margin-top: 12px;
+
             border: 0;
             border-radius: 12px;
+
             background: var(--accent);
             color: #fff;
+
             font-size: 16px;
             font-weight: 600;
+
             cursor: pointer;
         }
 
@@ -173,6 +202,7 @@
         .result-card {
             margin-bottom: 12px;
             padding: 18px;
+
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 16px;
@@ -186,8 +216,10 @@
         .property {
             display: flex;
             gap: 12px;
+
             padding: 7px 0;
             border-top: 1px solid #eeeeee;
+
             font-size: 14px;
         }
 
@@ -196,21 +228,25 @@
         }
 
         .property-name {
-            min-width: 130px;
+            min-width: 140px;
             color: var(--secondary);
         }
 
         .property-value {
             overflow-wrap: anywhere;
+            white-space: pre-wrap;
         }
 
         .empty,
         .error {
             padding: 24px;
+
             text-align: center;
+
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 16px;
+
             color: var(--secondary);
         }
 
@@ -254,12 +290,14 @@
 
 <header>
     <h1 class="logo">MoleFind</h1>
+
     <p class="tagline">
         Search compounds by SMILES or molecular formula.
     </p>
 </header>
 
 <main>
+
     <section class="search-panel">
 
         <div
@@ -267,10 +305,31 @@
             class="mode-wrapper"
             aria-label="Search mode selector"
         >
+
             <div class="mode-selector">
-                <span class="mode-arrow">←</span>
-                <span id="modeName">SMILES</span>
-                <span class="mode-arrow">→</span>
+
+                <button
+                    id="previousMode"
+                    class="mode-arrow"
+                    type="button"
+                    aria-label="Previous search mode"
+                >
+                    ←
+                </button>
+
+                <span id="modeName">
+                    SMILES
+                </span>
+
+                <button
+                    id="nextMode"
+                    class="mode-arrow"
+                    type="button"
+                    aria-label="Next search mode"
+                >
+                    →
+                </button>
+
             </div>
 
             <label
@@ -290,22 +349,30 @@
                 aria-label="Search input"
             >
 
-            <button id="searchButton" type="button">
+            <button
+                id="searchButton"
+                type="button"
+            >
                 Search
             </button>
 
             <p class="hint">
                 Swipe left/right on mobile. Use ← / → on PC.
             </p>
+
         </div>
 
     </section>
 
-    <section id="results" aria-live="polite"></section>
+    <section
+        id="results"
+        aria-live="polite"
+    ></section>
+
 </main>
 
 <footer>
-    MoleFind
+    ©2026 TAICHI1129
 </footer>
 
 <script src="system.js"></script>
