@@ -231,7 +231,7 @@
             display: flex;
             gap: 12px;
 
-            padding: 7px 0;
+            padding: 8px 0;
 
             border-top: 1px solid #eeeeee;
 
@@ -243,13 +243,23 @@
         }
 
         .property-name {
-            min-width: 140px;
+            min-width: 150px;
             color: var(--secondary);
         }
 
         .property-value {
+            flex: 1;
             overflow-wrap: anywhere;
             white-space: pre-wrap;
+        }
+
+        .property-value a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .property-value a:hover {
+            text-decoration: underline;
         }
 
         .empty,
@@ -270,12 +280,6 @@
             color: #c62828;
         }
 
-        /*
-         * JavaScript disabled warning
-         *
-         * This block is only displayed when
-         * JavaScript is disabled.
-         */
         .js-warning {
             margin: 20px auto;
 
@@ -344,13 +348,8 @@
 
 <body>
 
-    <!--
-        This message is displayed only when
-        JavaScript is disabled.
-    -->
     <noscript>
         <div class="js-warning">
-
             <strong>
                 JavaScript is required.
             </strong>
@@ -360,21 +359,16 @@
                 Please enable JavaScript in your browser
                 and reload this page.
             </p>
-
         </div>
     </noscript>
 
 
     <header>
-
-        <h1 class="logo">
-            MoleFind
-        </h1>
+        <h1 class="logo">MoleFind</h1>
 
         <p class="tagline">
             Search compounds by SMILES or molecular formula.
         </p>
-
     </header>
 
 
