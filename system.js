@@ -2,7 +2,6 @@
 
 /*
  * MoleFind
- * Main application system
  *
  * Search modes:
  *   0 = SMILES
@@ -17,33 +16,56 @@ const SEARCH_MODES = {
 let currentMode = SEARCH_MODES.SMILES;
 let compounds = [];
 
-const modeName = document.getElementById("modeName");
-const inputLabel = document.getElementById("inputLabel");
-const searchInput = document.getElementById("searchInput");
-const searchButton = document.getElementById("searchButton");
-const results = document.getElementById("results");
-const modeWrapper = document.getElementById("modeWrapper");
+const modeName =
+    document.getElementById("modeName");
+
+const inputLabel =
+    document.getElementById("inputLabel");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const searchButton =
+    document.getElementById("searchButton");
+
+const previousModeButton =
+    document.getElementById("previousMode");
+
+const nextModeButton =
+    document.getElementById("nextMode");
+
+const modeWrapper =
+    document.getElementById("modeWrapper");
+
+const results =
+    document.getElementById("results");
 
 
 /* =========================================================
    Initialisation
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded", async () => {
-    updateModeUI();
-    await loadCompounds();
-});
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+        updateModeUI();
+        await loadCompounds();
+    }
+);
 
 
 /* =========================================================
-   Load JSON database
+   Load database
    ========================================================= */
 
 async function loadCompounds() {
     try {
-        const response = await fetch("compds.json", {
-            cache: "no-cache"
-        });
+        const response = await fetch(
+            "compds.json",
+            {
+                cache: "no-cache"
+            }
+        );
 
         if (!response.ok) {
             throw new Error(
@@ -54,10 +76,13 @@ async function loadCompounds() {
         const data = await response.json();
 
         if (!Array.isArray(data)) {
-            throw new Error("compds.json must contain an array.");
+            throw new Error(
+                "compds.json must contain an array."
+            );
         }
 
         compounds = data;
+
     } catch (error) {
         console.error(error);
 
@@ -75,6 +100,7 @@ async function loadCompounds() {
    ========================================================= */
 
 function setMode(mode) {
+
     if (
         mode !== SEARCH_MODES.SMILES &&
         mode !== SEARCH_MODES.FORMULA
@@ -83,129 +109,192 @@ function setMode(mode) {
     }
 
     currentMode = mode;
+
     updateModeUI();
 }
 
 
 function nextMode() {
-    setMode(
+
+    if (
         currentMode === SEARCH_MODES.SMILES
-            ? SEARCH_MODES.FORMULA
-            : SEARCH_MODES.SMILES
-    );
+    ) {
+        setMode(SEARCH_MODES.FORMULA);
+    } else {
+        setMode(SEARCH_MODES.SMILES);
+    }
 }
 
 
 function previousMode() {
-    setMode(
+
+    if (
         currentMode === SEARCH_MODES.SMILES
-            ? SEARCH_MODES.FORMULA
-            : SEARCH_MODES.SMILES
-    );
+    ) {
+        setMode(SEARCH_MODES.FORMULA);
+    } else {
+        setMode(SEARCH_MODES.SMILES);
+    }
 }
 
 
 function updateModeUI() {
-    const isSMILES = currentMode === SEARCH_MODES.SMILES;
 
-    modeName.textContent = isSMILES
-        ? "SMILES"
-        : "Molecular Formula";
+    const isSMILES =
+        currentMode === SEARCH_MODES.SMILES;
 
-    inputLabel.textContent = isSMILES
-        ? "SMILES"
-        : "Molecular Formula";
+    modeName.textContent =
+        isSMILES
+            ? "SMILES"
+            : "Molecular Formula";
 
-    searchInput.placeholder = isSMILES
-        ? "e.g. CCO"
-        : "e.g. C2H6O";
+    inputLabel.textContent =
+        isSMILES
+            ? "SMILES"
+            : "Molecular Formula";
+
+    searchInput.placeholder =
+        isSMILES
+            ? "e.g. CCO"
+            : "e.g. C2H6O";
 }
+
+
+/* =========================================================
+   Arrow buttons
+   ========================================================= */
+
+previousModeButton.addEventListener(
+    "click",
+    previousMode
+);
+
+nextModeButton.addEventListener(
+    "click",
+    nextMode
+);
 
 
 /* =========================================================
    PC keyboard controls
    ========================================================= */
 
-document.addEventListener("keydown", (event) => {
-    /*
-     * Do not intercept arrow keys while the user is editing
-     * the input field.
-     */
-    if (
-        document.activeElement === searchInput ||
-        document.activeElement === searchButton
-    ) {
-        return;
-    }
+document.addEventListener(
+    "keydown",
+    (event) => {
 
-    if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        previousMode();
-    }
+        /*
+         * Do not intercept arrow keys while
+         * editing the search field.
+         */
+        if (
+            document.activeElement === searchInput
+        ) {
+            return;
+        }
 
-    if (event.key === "ArrowRight") {
-        event.preventDefault();
-        nextMode();
+        if (event.key === "ArrowLeft") {
+
+            event.preventDefault();
+
+            previousMode();
+        }
+
+        if (event.key === "ArrowRight") {
+
+            event.preventDefault();
+
+            nextMode();
+        }
     }
-});
+);
 
 
 /* =========================================================
-   Enter key search
+   Enter key
    ========================================================= */
 
-searchInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        search();
-    }
-});
+searchInput.addEventListener(
+    "keydown",
+    (event) => {
 
-searchButton.addEventListener("click", search);
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            search();
+        }
+    }
+);
+
+
+searchButton.addEventListener(
+    "click",
+    search
+);
 
 
 /* =========================================================
-   Touch / swipe controls
+   Touch / swipe
    ========================================================= */
 
 let touchStartX = 0;
 let touchStartY = 0;
 let touchStartTime = 0;
 
+
 modeWrapper.addEventListener(
     "touchstart",
     (event) => {
-        if (event.touches.length !== 1) {
+
+        if (
+            event.touches.length !== 1
+        ) {
             return;
         }
 
-        touchStartX = event.touches[0].clientX;
-        touchStartY = event.touches[0].clientY;
-        touchStartTime = Date.now();
+        touchStartX =
+            event.touches[0].clientX;
+
+        touchStartY =
+            event.touches[0].clientY;
+
+        touchStartTime =
+            Date.now();
     },
-    { passive: true }
+    {
+        passive: true
+    }
 );
 
 
 modeWrapper.addEventListener(
     "touchend",
     (event) => {
-        if (event.changedTouches.length !== 1) {
+
+        if (
+            event.changedTouches.length !== 1
+        ) {
             return;
         }
 
-        const endX = event.changedTouches[0].clientX;
-        const endY = event.changedTouches[0].clientY;
+        const endX =
+            event.changedTouches[0].clientX;
 
-        const deltaX = endX - touchStartX;
-        const deltaY = endY - touchStartY;
-        const elapsed = Date.now() - touchStartTime;
+        const endY =
+            event.changedTouches[0].clientY;
+
+        const deltaX =
+            endX - touchStartX;
+
+        const deltaY =
+            endY - touchStartY;
+
+        const elapsed =
+            Date.now() - touchStartTime;
 
         const minimumDistance = 60;
 
-        /*
-         * Ignore slow or mostly vertical gestures.
-         */
         if (
             elapsed > 800 ||
             Math.abs(deltaX) < minimumDistance ||
@@ -220,7 +309,9 @@ modeWrapper.addEventListener(
             previousMode();
         }
     },
-    { passive: true }
+    {
+        passive: true
+    }
 );
 
 
@@ -229,18 +320,23 @@ modeWrapper.addEventListener(
    ========================================================= */
 
 function search() {
+
     if (compounds.length === 0) {
         return;
     }
 
-    const query = searchInput.value.trim();
+    const query =
+        searchInput.value.trim();
 
     if (!query) {
+
         results.innerHTML = `
             <div class="empty">
-                Enter a ${currentMode === SEARCH_MODES.SMILES
-                    ? "SMILES notation"
-                    : "molecular formula"}.
+                Enter a ${
+                    currentMode === SEARCH_MODES.SMILES
+                        ? "SMILES notation"
+                        : "molecular formula"
+                }.
             </div>
         `;
 
@@ -249,13 +345,18 @@ function search() {
 
     let matches = [];
 
-    if (currentMode === SEARCH_MODES.SMILES) {
+    if (
+        currentMode === SEARCH_MODES.SMILES
+    ) {
         matches = searchBySMILES(query);
     } else {
         matches = searchByFormula(query);
     }
 
-    renderResults(query, matches);
+    renderResults(
+        query,
+        matches
+    );
 }
 
 
@@ -264,25 +365,50 @@ function search() {
    ========================================================= */
 
 function searchBySMILES(query) {
-    const normalizedQuery = normalizeSMILES(query);
 
-    return compounds.filter((compound) => {
-        if (!compound.smiles) {
-            return false;
+    const normalizedQuery =
+        normalizeSMILES(query);
+
+    return compounds.filter(
+        (compound) => {
+
+            if (!compound.smiles) {
+                return false;
+            }
+
+            /*
+             * Supports:
+             *
+             * "CCO"
+             *
+             * or
+             *
+             * ["CCO", "OCC"]
+             */
+
+            const smilesList =
+                Array.isArray(compound.smiles)
+                    ? compound.smiles
+                    : [compound.smiles];
+
+            return smilesList.some(
+                (smiles) =>
+                    normalizeSMILES(smiles) ===
+                    normalizedQuery
+            );
         }
-
-        return normalizeSMILES(compound.smiles) === normalizedQuery;
-    });
+    );
 }
 
 
 /*
- * This is intentionally a basic normalisation layer.
+ * Basic SMILES normalisation.
  *
- * It does NOT perform full chemical SMILES canonicalisation.
- * Full structural equivalence requires a chemistry toolkit.
+ * This does NOT perform complete
+ * chemical structure canonicalisation.
  */
 function normalizeSMILES(smiles) {
+
     return String(smiles)
         .trim()
         .replace(/\s+/g, "");
@@ -294,38 +420,38 @@ function normalizeSMILES(smiles) {
    ========================================================= */
 
 function searchByFormula(query) {
-    const normalizedQuery = normalizeFormula(query);
 
-    return compounds.filter((compound) => {
-        if (!compound.formula) {
-            return false;
+    const normalizedQuery =
+        normalizeFormula(query);
+
+    return compounds.filter(
+        (compound) => {
+
+            if (!compound.formula) {
+                return false;
+            }
+
+            return (
+                normalizeFormula(
+                    compound.formula
+                ) === normalizedQuery
+            );
         }
-
-        return normalizeFormula(compound.formula) === normalizedQuery;
-    });
+    );
 }
 
 
-/*
- * Converts formulas such as:
- *
- *   C2H6O
- *   c2h6o
- *   C₂H₆O
- *
- * into a consistent internal representation.
- *
- * The resulting element order is alphabetical by element symbol.
- */
+/* =========================================================
+   Molecular formula normalisation
+   ========================================================= */
 
 function normalizeFormula(formula) {
-    let value = String(formula)
-        .trim()
-        .replace(/\s+/g, "");
 
-    /*
-     * Convert common Unicode subscripts to normal digits.
-     */
+    let value =
+        String(formula)
+            .trim()
+            .replace(/\s+/g, "");
+
     const subscriptMap = {
         "₀": "0",
         "₁": "1",
@@ -339,21 +465,16 @@ function normalizeFormula(formula) {
         "₉": "9"
     };
 
-    value = value.replace(/[₀₁₂₃₄₅₆₇₈₉]/g, (char) => {
-        return subscriptMap[char];
-    });
-
-    /*
-     * Basic molecular formula parser.
-     *
-     * Examples:
-     * C2H6O
-     * NaCl
-     * C6H12O6
-     */
-    const matches = value.match(
-        /([A-Za-z]{1,2})(\d*)/g
+    value = value.replace(
+        /[₀₁₂₃₄₅₆₇₈₉]/g,
+        (character) =>
+            subscriptMap[character]
     );
+
+    const matches =
+        value.match(
+            /([A-Za-z]{1,2})(\d*)/g
+        );
 
     if (!matches) {
         return value.toLowerCase();
@@ -362,9 +483,11 @@ function normalizeFormula(formula) {
     const elements = {};
 
     for (const token of matches) {
-        const match = token.match(
-            /^([A-Za-z]{1,2})(\d*)$/
-        );
+
+        const match =
+            token.match(
+                /^([A-Za-z]{1,2})(\d*)$/
+            );
 
         if (!match) {
             continue;
@@ -372,29 +495,37 @@ function normalizeFormula(formula) {
 
         const symbol =
             match[1][0].toUpperCase() +
-            match[1].slice(1).toLowerCase();
+            match[1]
+                .slice(1)
+                .toLowerCase();
 
-        const count = match[2]
-            ? Number(match[2])
-            : 1;
+        const count =
+            match[2]
+                ? Number(match[2])
+                : 1;
 
         if (!Number.isFinite(count)) {
             continue;
         }
 
         elements[symbol] =
-            (elements[symbol] || 0) + count;
+            (elements[symbol] || 0) +
+            count;
     }
 
     return Object.keys(elements)
         .sort()
-        .map((element) => {
-            const count = elements[element];
+        .map(
+            (element) => {
 
-            return count === 1
-                ? element
-                : `${element}${count}`;
-        })
+                const count =
+                    elements[element];
+
+                return count === 1
+                    ? element
+                    : `${element}${count}`;
+            }
+        )
         .join("");
 }
 
@@ -403,8 +534,13 @@ function normalizeFormula(formula) {
    Result rendering
    ========================================================= */
 
-function renderResults(query, matches) {
+function renderResults(
+    query,
+    matches
+) {
+
     if (matches.length === 0) {
+
         results.innerHTML = `
             <div class="empty">
                 No matching compounds found.
@@ -419,47 +555,28 @@ function renderResults(query, matches) {
             ? "SMILES"
             : "molecular formula";
 
-    const cards = matches.map((compound) => {
-        return `
-            <article class="result-card">
-                <h2 class="result-name">
-                    ${escapeHTML(compound.name || "Unnamed compound")}
-                </h2>
-
-                ${renderProperty(
-                    "Formula",
-                    compound.formula
-                )}
-
-                ${renderProperty(
-                    "SMILES",
-                    compound.smiles
-                )}
-
-                ${renderProperty(
-                    "CAS RN",
-                    compound.cas
-                )}
-
-                ${renderProperty(
-                    "Molar mass",
-                    formatMolarMass(compound.molar_mass)
-                )}
-
-                ${renderProperty(
-                    "Description",
-                    compound.description
-                )}
-            </article>
-        `;
-    }).join("");
+    const cards =
+        matches
+            .map(
+                (compound) =>
+                    renderCompoundCard(
+                        compound
+                    )
+            )
+            .join("");
 
     results.innerHTML = `
         <p class="result-summary">
             ${matches.length}
-            ${matches.length === 1 ? "compound" : "compounds"}
+            ${
+                matches.length === 1
+                    ? "compound"
+                    : "compounds"
+            }
             found for ${escapeHTML(modeText)}:
-            <strong>${escapeHTML(query)}</strong>
+            <strong>
+                ${escapeHTML(query)}
+            </strong>
         </p>
 
         ${cards}
@@ -468,10 +585,76 @@ function renderResults(query, matches) {
 
 
 /* =========================================================
+   Compound card
+   ========================================================= */
+
+function renderCompoundCard(
+    compound
+) {
+
+    const smilesList =
+        Array.isArray(compound.smiles)
+            ? compound.smiles
+            : compound.smiles
+                ? [compound.smiles]
+                : [];
+
+    const smilesText =
+        smilesList.join("\n");
+
+    return `
+        <article class="result-card">
+
+            <h2 class="result-name">
+                ${
+                    escapeHTML(
+                        compound.name ||
+                        "Unnamed compound"
+                    )
+                }
+            </h2>
+
+            ${renderProperty(
+                "Formula",
+                compound.formula
+            )}
+
+            ${renderProperty(
+                "SMILES",
+                smilesText
+            )}
+
+            ${renderProperty(
+                "CAS RN",
+                compound.cas
+            )}
+
+            ${renderProperty(
+                "Molar mass",
+                formatMolarMass(
+                    compound.molar_mass
+                )
+            )}
+
+            ${renderProperty(
+                "Description",
+                compound.description
+            )}
+
+        </article>
+    `;
+}
+
+
+/* =========================================================
    Property rendering
    ========================================================= */
 
-function renderProperty(name, value) {
+function renderProperty(
+    name,
+    value
+) {
+
     if (
         value === undefined ||
         value === null ||
@@ -482,19 +665,24 @@ function renderProperty(name, value) {
 
     return `
         <div class="property">
+
             <span class="property-name">
                 ${escapeHTML(name)}
             </span>
 
             <span class="property-value">
-                ${escapeHTML(String(value))}
+                ${escapeHTML(
+                    String(value)
+                )}
             </span>
+
         </div>
     `;
 }
 
 
 function formatMolarMass(value) {
+
     if (
         value === undefined ||
         value === null ||
@@ -503,7 +691,8 @@ function formatMolarMass(value) {
         return "";
     }
 
-    const number = Number(value);
+    const number =
+        Number(value);
 
     if (!Number.isFinite(number)) {
         return String(value);
@@ -518,10 +707,26 @@ function formatMolarMass(value) {
    ========================================================= */
 
 function escapeHTML(value) {
+
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 }
