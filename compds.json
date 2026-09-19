@@ -7,6 +7,13 @@
         ],
         "cas": "7732-18-5",
         "molar_mass": 18.015,
+        "boiling_point": "100.0 °C at 1 atm",
+        "density": "0.997 g/cm³ at 25 °C",
+        "logp": "-0.3",
+        "functional_groups": [],
+        "acid_base": "Neutral",
+        "iupac_name": "oxidane",
+        "inchi_key": "XLYOFNOQVPJJNP-UHFFFAOYSA-N",
         "description": "A chemical compound composed of hydrogen and oxygen."
     },
     {
@@ -18,6 +25,15 @@
         ],
         "cas": "64-17-5",
         "molar_mass": 46.069,
+        "boiling_point": "78.24 °C at 1 atm",
+        "density": "0.7893 g/cm³ at 20 °C",
+        "logp": "-0.1",
+        "functional_groups": [
+            "Alcohol"
+        ],
+        "acid_base": "Neutral",
+        "iupac_name": "ethanol",
+        "inchi_key": "LFQSCWFLJHTTHZ-UHFFFAOYSA-N",
         "description": "An alcohol with the molecular formula C2H6O."
     },
     {
@@ -28,6 +44,15 @@
         ],
         "cas": "115-10-6",
         "molar_mass": 46.069,
+        "boiling_point": "-24.8 °C at 1 atm",
+        "density": "0.661 g/cm³ at -24.8 °C",
+        "logp": "0.1",
+        "functional_groups": [
+            "Ether"
+        ],
+        "acid_base": "Neutral",
+        "iupac_name": "methoxymethane",
+        "inchi_key": "LCGLNKUTAGEVQW-UHFFFAOYSA-N",
         "description": "An ether with the molecular formula C2H6O."
     },
     {
@@ -39,6 +64,15 @@
         ],
         "cas": "67-56-1",
         "molar_mass": 32.042,
+        "boiling_point": "64.7 °C at 1 atm",
+        "density": "0.7866 g/cm³ at 25 °C",
+        "logp": "-0.5",
+        "functional_groups": [
+            "Alcohol"
+        ],
+        "acid_base": "Neutral",
+        "iupac_name": "methanol",
+        "inchi_key": "OKKJLVBELUTLKV-UHFFFAOYSA-N",
         "description": "The simplest alcohol."
     },
     {
@@ -50,16 +84,35 @@
         ],
         "cas": "64-19-7",
         "molar_mass": 60.052,
+        "boiling_point": "118.1 °C at 1 atm",
+        "density": "1.0446 g/cm³ at 25 °C",
+        "logp": "-0.2",
+        "functional_groups": [
+            "Carboxylic acid"
+        ],
+        "acid_base": "Acid",
+        "iupac_name": "acetic acid",
+        "inchi_key": "QTBSBXVTEAMEQO-UHFFFAOYSA-N",
         "description": "A carboxylic acid commonly found in vinegar."
     },
     {
         "name": "Glucose",
         "formula": "C6H12O6",
         "smiles": [
-            "C(C1C(C(C(C(O1)O)O)O)O)O"
+            "C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)O"
         ],
         "cas": "50-99-7",
         "molar_mass": 180.156,
+        "boiling_point": "Decomposes before boiling",
+        "density": "1.54–1.56 g/cm³",
+        "logp": "-2.6",
+        "functional_groups": [
+            "Alcohol",
+            "Hemiacetal"
+        ],
+        "acid_base": "Neutral",
+        "iupac_name": "(2R,3S,4R,5R,6R)-2,3,4,5,6-pentahydroxyhexanal",
+        "inchi_key": "WQZGKKKJIJFFOK-GASJEMHNSA-N",
         "description": "A monosaccharide with the molecular formula C6H12O6."
     },
     {
@@ -70,6 +123,17 @@
         ],
         "cas": "58-08-2",
         "molar_mass": 194.190,
+        "boiling_point": "Sublimes/decomposes at approximately 178 °C",
+        "density": "1.23 g/cm³",
+        "logp": "-0.1",
+        "functional_groups": [
+            "Amide",
+            "Imide",
+            "Heterocycle"
+        ],
+        "acid_base": "Weak base",
+        "iupac_name": "1,3,7-trimethylpurine-2,6-dione",
+        "inchi_key": "RYYVLZVUVIJVGH-UHFFFAOYSA-N",
         "description": "A naturally occurring methylxanthine alkaloid."
     },
     {
@@ -80,6 +144,15 @@
         ],
         "cas": "71-43-2",
         "molar_mass": 78.114,
+        "boiling_point": "80.1 °C at 1 atm",
+        "density": "0.8765 g/cm³ at 25 °C",
+        "logp": "2.13",
+        "functional_groups": [
+            "Aromatic ring"
+        ],
+        "acid_base": "Neutral",
+        "iupac_name": "benzene",
+        "inchi_key": "UHOVQNZJYSORNB-UHFFFAOYSA-N",
         "description": "An aromatic hydrocarbon with a six-membered ring."
     },
     {
@@ -90,6 +163,15 @@
         ],
         "cas": "110-86-1",
         "molar_mass": 79.102,
+        "boiling_point": "115.2 °C at 1 atm",
+        "density": "0.982 g/cm³ at 20 °C",
+        "logp": "0.65",
+        "functional_groups": [
+            "Aromatic heterocycle"
+        ],
+        "acid_base": "Base",
+        "iupac_name": "pyridine",
+        "inchi_key": "JUJWROOIHBZHMG-UHFFFAOYSA-N",
         "description": "An aromatic heterocyclic compound containing one nitrogen atom."
     },
     {
@@ -100,6 +182,16 @@
         ],
         "cas": "109-97-7",
         "molar_mass": 67.091,
+        "boiling_point": "131.2 °C at 1 atm",
+        "density": "0.967 g/cm³ at 25 °C",
+        "logp": "0.7",
+        "functional_groups": [
+            "Aromatic heterocycle",
+            "Secondary amine"
+        ],
+        "acid_base": "Very weak base",
+        "iupac_name": "1H-pyrrole",
+        "inchi_key": "KAESVJOAVNADME-UHFFFAOYSA-N",
         "description": "An aromatic five-membered nitrogen-containing heterocycle."
     }
 ]
